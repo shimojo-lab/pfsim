@@ -1,16 +1,9 @@
-from abc import ABCMeta, abstractmethod
 from logging import getLogger
 
 logger = getLogger(__name__)
 
 
-class Scheduler(metaclass=ABCMeta):
-    @abstractmethod
-    def allocate(self, job):
-        pass
-
-
-class LinearScheduler(Scheduler):
+class LinearScheduler:
     def __init__(self, simulator):
         simulator.register("job submitted", self.allocate)
         simulator.register("job finished", self.release)
@@ -66,11 +59,11 @@ class LinearScheduler(Scheduler):
             if procs_togo <= 0:
                 break
 
-            procs_togo -= host.capacity
-            allocated_pes += host.capacity
-
             host.allocated = True
             host.job = job.name
+
+            procs_togo -= host.capacity
+            allocated_pes += host.capacity
 
         return allocated_pes
 
