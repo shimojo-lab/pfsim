@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import call, MagicMock
 
 from .simulator import Simulator
 
@@ -35,3 +35,15 @@ class TestSimulator:
         self.sim.run()
 
         assert self.sim.time == 123.4
+
+    def test_event_ordering(self):
+        _handler = MagicMock()
+
+        self.sim.register("test", _handler)
+        self.sim.schedule("test", 3.0, x="piyo")
+        self.sim.schedule("test", 1.0, x="foo")
+        self.sim.schedule("test", 2.0, x="hoge")
+        self.sim.run()
+
+        calls = [call(x="foo"), call(x="hoge"), call(x="piyo")]
+        _handler.assert_has_calls(calls)
