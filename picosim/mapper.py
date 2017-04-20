@@ -24,3 +24,5 @@ class SimpleMapper:
 
                 procs_togo -= 1
                 rank += 1
+
+        self.simulator.schedule("job launched")
