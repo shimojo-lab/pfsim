@@ -5,9 +5,9 @@ logger = getLogger(__name__)
 
 class LinearScheduler:
     def __init__(self, simulator):
+        self.simulator = simulator
         simulator.register("job submitted", self.allocate)
         simulator.register("job finished", self.release)
-        self.simulator = simulator
 
     def allocate(self, job, hosts):
         def available_pes(block):

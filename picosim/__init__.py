@@ -1,31 +1,20 @@
-import logging.config
+from .util import configure_logging
 
-
-def configure_logging():
-    logging.config.dictConfig({
-        "version": 1,
-        "formatters": {
-            "color": {
-                "()": "colorlog.ColoredFormatter",
-                "format": "%(log_color)s[%(levelname)s]%(reset)s [%(name)s]: "
-                          "%(message)s",
-                "datefmt": "%H:%M:%S"
-            }
-        },
-        "handlers": {
-            "default": {
-                "class": "logging.StreamHandler",
-                "formatter": "color",
-                "stream": "ext://sys.stdout",
-            }
-        },
-        "root": {
-            "level": "INFO",
-            "handlers": ["default"],
-        },
-        "disable_existing_loggers": False
-    })
+from .cluster import Cluster
+from .mapper import SimpleMapper
+from .router import RandomRouter
+from .scheduler import LinearScheduler
+from .simulator import Simulator
 
 
 def main():
     configure_logging()
+
+    scheduler = LinearScheduler()
+    mapper = SimpleMapper()
+    router = RandomRouter()
+
+    cluster = Cluster("milk.graphml")
+
+    simulator = Simulator()
+    simulator.add([scheduler, mapper, router, cluster])

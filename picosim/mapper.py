@@ -7,8 +7,8 @@ logger = getLogger(__name__)
 
 class SimpleMapper:
     def __init__(self, simulator):
-        simulator.register("job allocated", self.map)
         self.simulator = simulator
+        simulator.register("job allocated", self.map)
 
     def map(self, job, allocated_hosts):
         procs_togo = job.n_procs
