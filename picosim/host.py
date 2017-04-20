@@ -8,6 +8,8 @@ class Host:
         self.allocated = False
         # Name of the job which this host is allocated to
         self.job = None
+        # List of processes running on this host
+        self.running_procs = []
 
     def __repr__(self):
         return "<Host {0} cap:{1} alloc:{2} job:{3}>".format(
