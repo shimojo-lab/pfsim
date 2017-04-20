@@ -24,10 +24,12 @@ class Simulator:
         self.event_queue = []
         self.event_handlers = defaultdict(list)
         self.time = 0.0
+        self.n_events = 0
 
     def run(self):
         while self.event_queue:
             self.time, ev = heappop(self.event_queue)
+            self.n_events += 1
 
             logger.info("Event {0} at {1}".format(ev.name, self.time))
 
