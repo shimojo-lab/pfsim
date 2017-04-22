@@ -28,13 +28,23 @@ class Simulator:
 
     def run(self):
         while self.event_queue:
-            self.time, ev = heappop(self.event_queue)
-            self.n_events += 1
+            self.step()
 
-            logger.info("Event {0} at {1}".format(ev.name, self.time))
+    def run_until(self, time):
+        while self.event_queue and self.event_queue[0][0] <= time:
+            self.step()
 
-            for handler in self.event_handlers[ev.name]:
-                handler(**ev.data)
+    def step(self):
+        if not self.event_queue:
+            return
+
+        self.time, ev = heappop(self.event_queue)
+        self.n_events += 1
+
+        logger.info("Event {0} at {1}".format(ev.name, self.time))
+
+        for handler in self.event_handlers[ev.name]:
+            handler(**ev.data)
 
     def schedule(self, name, time=None, **kwargs):
         if not time:

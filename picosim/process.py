@@ -1,8 +1,9 @@
 class Process:
-    def __init__(self, job, rank, host=None):
+    def __init__(self, job, rank):
         self.job = job
         self.rank = rank
-        self.host = host
+        self.host = None
+        self.job = None
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):

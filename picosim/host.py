@@ -9,7 +9,7 @@ class Host:
         # Name of the job which this host is allocated to
         self.job = None
         # List of processes running on this host
-        self.running_procs = []
+        self.procs = []
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
