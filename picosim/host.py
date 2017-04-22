@@ -11,6 +11,15 @@ class Host:
         # List of processes running on this host
         self.running_procs = []
 
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+
+        return self.name == other.name
+
+    def __lt__(self, other):
+        return self.name < other.name
+
     def __repr__(self):
         return "<Host {0} cap:{1} alloc:{2} job:{3}>".format(
             self.name, self.capacity, self.allocated, self.job)

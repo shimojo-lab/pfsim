@@ -1,7 +1,7 @@
 from .util import configure_logging
 
 from .cluster import Cluster
-from .mapper import SimpleMapper
+from .process_mapper import LinearProcessMapper
 from .router import RandomRouter
 from .scheduler import LinearScheduler
 from .simulator import Simulator
