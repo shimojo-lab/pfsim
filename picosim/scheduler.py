@@ -79,7 +79,6 @@ class FCFSScheduler:
         # Associate job and processes
         job.procs = procs
         for proc in procs:
-            proc.host = proxy(host)
             proc.job = proxy(job)
 
         self.simulator.schedule("job.finished",
