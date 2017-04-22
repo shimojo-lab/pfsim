@@ -15,6 +15,8 @@ class Experiment:
     def run(self):
         self.simulator.run()
 
+        nx.write_graphml(self.cluster.graph, "result.graphml")
+
     @classmethod
     def from_yaml(cls, path):
         with open(path) as f:
