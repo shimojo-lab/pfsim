@@ -3,7 +3,7 @@ from .util import configure_logging
 from .cluster import Cluster
 from .process_mapper import LinearProcessMapper
 from .router import RandomRouter
-from .scheduler import LinearScheduler
+from .host_selector import LinearHostSelector
 from .simulator import Simulator
 
 
