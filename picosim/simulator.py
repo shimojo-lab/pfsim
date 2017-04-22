@@ -41,10 +41,11 @@ class Simulator:
         self.time, ev = heappop(self.event_queue)
         self.n_events += 1
 
-        logger.info("Event {0} at {1}".format(ev.name, self.time))
-
         for handler in self.event_handlers[ev.name]:
             handler(**ev.data)
+
+    def schedule_after(self, name, time=None, **kwargs):
+        self.schedule(name, self.time + time, **kwargs)
 
     def schedule(self, name, time=None, **kwargs):
         if not time:

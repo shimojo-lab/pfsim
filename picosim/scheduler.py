@@ -81,6 +81,6 @@ class FCFSScheduler:
         for proc in procs:
             proc.job = proxy(job)
 
-        self.simulator.schedule("job.finished",
-                                self.simulator.time + job.duration,
-                                job=job, hosts=hosts)
+        self.simulator.schedule("job.started", job=job)
+        self.simulator.schedule_after("job.finished", job.duration,
+                                      job=job, hosts=hosts)

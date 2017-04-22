@@ -24,7 +24,7 @@ class TestFCFSScheduler:
 
         assert self.job1.status == JobStatus.CREATED
 
-        self.simulator.step()
+        self.simulator.run_until(1.0)
 
         assert self.job1.status == JobStatus.RUNNING
 
@@ -43,7 +43,7 @@ class TestFCFSScheduler:
         # Sum of launched procs should be equal to requested procs
         assert len(self.job1.procs) == self.job1.n_procs
 
-        self.simulator.step()
+        self.simulator.run()
 
         assert self.job1.status == JobStatus.FINISHED
         # Hosts should be released
@@ -74,7 +74,7 @@ class TestFCFSScheduler:
 
         assert self.job1.status == JobStatus.CREATED
 
-        self.simulator.step()
+        self.simulator.run()
 
         assert self.job1.status == JobStatus.QUEUED
 

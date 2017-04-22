@@ -8,7 +8,9 @@ JobStatus = Enum("JobStatus", "CREATED QUEUED RUNNING FINISHED")
 
 
 class Job:
-    def __init__(self, name, n_procs=0, duration=0.0, traffic_matrix=[]):
+    def __init__(self, name, n_procs=1, duration=0.0, traffic_matrix=[],
+                 simulator=None):
+        self.simulator = simulator
         self.name = name
         self.n_procs = n_procs
         self.traffic_matrix = traffic_matrix
@@ -18,6 +20,21 @@ class Job:
         self.procs = []
 
         self.status = JobStatus.CREATED
+
+        if simulator:
+            self.simulator = simulator
+            self.simulator.register("job.started", self.started)
+
+    def started(self, job):
+        if self != job:
+            return
+
+        for src, row in enumerate(self.traffic_matrix):
+            for dst, traffic in enumerate(row):
+                self.simulator.schedule("job.communicate",
+                                        src_proc=self.procs[src],
+                                        dst_proc=self.procs[dst],
+                                        traffic=traffic)
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -30,7 +47,7 @@ class Job:
                                              self.status.name)
 
     @classmethod
-    def from_trace(cls, path):
+    def from_trace(cls, path, duration=0.0, simulator=None):
         tmp = {}
 
         with tarfile.open(path, "r:gz") as tar:
@@ -54,4 +71,4 @@ class Job:
                 matrix[src][dst] = traffic
 
         name = Path(path).name
-        return cls(name, n_procs, 100.0, matrix)
+        return cls(name, n_procs, duration, matrix, simulator)
