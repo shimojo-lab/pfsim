@@ -1,12 +1,23 @@
+import random
+from abc import ABC, abstractmethod
 from logging import getLogger
+
+import networkx as nx
 
 logger = getLogger(__name__)
 
 
-class RandomRouter:
-    def __init__(self, simulator):
-        self.simulator = simulator
-        simulator.register("routing requested", self.route)
-
-    def route(self, src, dst, graph):
+class Router(ABC):
+    @abstractmethod
+    def route(self, src_proc, dst_proc):
         pass
+
+
+class RandomRouter(Router):
+    def route(self, src_proc, dst_proc, graph):
+        src = src_proc.host
+        dst = dst_proc.host
+        paths = nx.all_shortest_paths(graph, src.name, dst.name,
+                                      weight="weight")
+
+        return random.choice(list(paths))
