@@ -17,7 +17,7 @@ class RandomRouter(Router):
     def route(self, src_proc, dst_proc, graph):
         src = src_proc.host
         dst = dst_proc.host
-        paths = nx.all_shortest_paths(graph, src.name, dst.name,
-                                      weight="weight")
+        paths = list(nx.all_shortest_paths(graph, src.name, dst.name,
+                                           weight="weight"))
 
-        return random.choice(list(paths))
+        return random.choice(paths)
