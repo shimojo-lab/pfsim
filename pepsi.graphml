@@ -1,0 +1,360 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="capacity" attr.type="long" for="edge" id="d3" />
+  <key attr.name="capacity" attr.type="long" for="node" id="d2" />
+  <key attr.name="typ" attr.type="string" for="node" id="d1" />
+  <key attr.name="name" attr.type="string" for="graph" id="d0" />
+  <graph edgedefault="directed">
+    <data key="d0">Pepsi cluster</data>
+    <node id="pepsi01">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi02">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi03">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi04">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi05">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi06">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi07">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi08">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi09">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi10">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi11">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi12">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi13">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi14">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi15">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi16">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi17">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi18">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi19">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi20">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi21">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi22">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi23">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi24">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi25">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi26">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi27">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="pepsi28">
+      <data key="d1">host</data>
+      <data key="d2">12</data>
+    </node>
+    <node id="edge1">
+      <data key="d1">switch</data>
+    </node>
+    <node id="edge2">
+      <data key="d1">switch</data>
+    </node>
+    <node id="edge3">
+      <data key="d1">switch</data>
+    </node>
+    <node id="edge4">
+      <data key="d1">switch</data>
+    </node>
+    <node id="core1">
+      <data key="d1">switch</data>
+    </node>
+    <node id="('edge1',)" />
+    <node id="('edge2',)" />
+    <node id="('edge3',)" />
+    <node id="('edge4',)" />
+    <node id="core2">
+      <data key="d1">switch</data>
+    </node>
+    <edge source="pepsi01" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi02" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi03" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi04" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi05" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi06" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi07" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi08" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi09" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi10" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi11" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi12" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi13" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi14" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi15" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi16" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi17" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi18" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi19" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi20" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi21" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi22" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi23" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi24" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi25" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi26" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi27" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="pepsi28" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="pepsi01">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="pepsi02">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="pepsi03">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="pepsi04">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="pepsi05">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="pepsi06">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="pepsi07">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="pepsi08">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="pepsi09">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="pepsi10">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="pepsi11">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="pepsi12">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="pepsi13">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="pepsi14">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="pepsi15">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="pepsi16">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="pepsi17">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="pepsi18">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="pepsi19">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="pepsi20">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="pepsi21">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="pepsi22">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="pepsi23">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="pepsi24">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="pepsi25">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="pepsi26">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="pepsi27">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="pepsi28">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="core1" target="('edge1',)">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="core1" target="('edge2',)">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="core1" target="('edge3',)">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="core1" target="('edge4',)">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="('edge1',)" target="core1">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="('edge1',)" target="core2">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="('edge2',)" target="core1">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="('edge2',)" target="core2">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="('edge3',)" target="core1">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="('edge3',)" target="core2">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="('edge4',)" target="core1">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="('edge4',)" target="core2">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="core2" target="('edge1',)">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="core2" target="('edge2',)">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="core2" target="('edge3',)">
+      <data key="d3">4</data>
+    </edge>
+    <edge source="core2" target="('edge4',)">
+      <data key="d3">4</data>
+    </edge>
+  </graph>
+</graphml>

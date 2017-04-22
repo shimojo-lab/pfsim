@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="capacity" attr.type="long" for="edge" id="d3" />
+  <key attr.name="capacity" attr.type="long" for="node" id="d2" />
+  <key attr.name="typ" attr.type="string" for="node" id="d1" />
+  <key attr.name="name" attr.type="string" for="graph" id="d0" />
+  <graph edgedefault="directed">
+    <data key="d0">Milk cluster</data>
+    <node id="milk01">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk02">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk03">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk04">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk05">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk06">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk07">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk08">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk09">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk10">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk11">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk12">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk13">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk14">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk15">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk16">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk17">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk18">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk19">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="milk20">
+      <data key="d1">host</data>
+      <data key="d2">8</data>
+    </node>
+    <node id="edge1">
+      <data key="d1">switch</data>
+    </node>
+    <node id="edge2">
+      <data key="d1">switch</data>
+    </node>
+    <node id="edge3">
+      <data key="d1">switch</data>
+    </node>
+    <node id="edge4">
+      <data key="d1">switch</data>
+    </node>
+    <node id="core1">
+      <data key="d1">switch</data>
+    </node>
+    <node id="core2">
+      <data key="d1">switch</data>
+    </node>
+    <edge source="milk01" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk02" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk03" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk04" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk05" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk06" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk07" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk08" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk09" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk10" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk11" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk12" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk13" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk14" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk15" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk16" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk17" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk18" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk19" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="milk20" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="milk01">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="milk02">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="milk03">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="milk04">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="milk05">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="core1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge1" target="core2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="milk06">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="milk07">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="milk08">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="milk09">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="milk10">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="core1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge2" target="core2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="milk11">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="milk12">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="milk13">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="milk14">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="milk15">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="core1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge3" target="core2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="milk16">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="milk17">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="milk18">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="milk19">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="milk20">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="core1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="edge4" target="core2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="core1" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="core1" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="core1" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="core1" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="core2" target="edge1">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="core2" target="edge2">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="core2" target="edge3">
+      <data key="d3">1</data>
+    </edge>
+    <edge source="core2" target="edge4">
+      <data key="d3">1</data>
+    </edge>
+  </graph>
+</graphml>
