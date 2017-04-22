@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-JobStatus = Enum("JobStatus", "SUBMITTED QUEUED RUNNING FINISHED")
+JobStatus = Enum("JobStatus", "CREATED QUEUED RUNNING FINISHED")
 
 
 class Job:
@@ -14,7 +14,7 @@ class Job:
         self.hosts = []
         self.procs = []
 
-        self.status = JobStatus.SUBMITTED
+        self.status = JobStatus.CREATED
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):

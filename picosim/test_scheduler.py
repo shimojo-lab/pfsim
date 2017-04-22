@@ -22,7 +22,7 @@ class TestFCFSScheduler:
         self.simulator.schedule("job.submitted", job=self.job1,
                                 hosts=self.hosts)
 
-        assert self.job1.status == JobStatus.SUBMITTED
+        assert self.job1.status == JobStatus.CREATED
 
         self.simulator.step()
 
@@ -56,7 +56,7 @@ class TestFCFSScheduler:
                                 hosts=self.hosts)
 
         self.simulator.run_until(0.5)
-        assert self.job1.status == JobStatus.SUBMITTED
+        assert self.job1.status == JobStatus.CREATED
 
         self.simulator.run_until(1.5)
         assert self.job1.status == JobStatus.RUNNING
@@ -72,7 +72,7 @@ class TestFCFSScheduler:
         self.simulator.schedule("job.submitted", 1.0, job=self.job1,
                                 hosts=self.hosts)
 
-        assert self.job1.status == JobStatus.SUBMITTED
+        assert self.job1.status == JobStatus.CREATED
 
         self.simulator.step()
 
@@ -87,7 +87,7 @@ class TestFCFSScheduler:
                                 hosts=self.hosts)
 
         self.simulator.run_until(0.5)
-        assert self.job1.status == JobStatus.SUBMITTED
+        assert self.job1.status == JobStatus.CREATED
 
         self.simulator.run_until(1.5)
         assert self.job1.status == JobStatus.RUNNING
