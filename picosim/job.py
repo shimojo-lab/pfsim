@@ -31,16 +31,13 @@ class Job:
 
         for src, row in enumerate(self.traffic_matrix):
             for dst, traffic in enumerate(row):
+                if traffic <= 0.0:
+                    continue
+
                 self.simulator.schedule("job.communicate",
                                         src_proc=self.procs[src],
                                         dst_proc=self.procs[dst],
                                         traffic=traffic)
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-
-        return self.name == other.name
 
     def __repr__(self):
         return "<Job {0} np:{1} {2}>".format(self.name, self.n_procs,

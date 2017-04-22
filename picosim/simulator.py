@@ -41,6 +41,9 @@ class Simulator:
         self.time, ev = heappop(self.event_queue)
         self.n_events += 1
 
+        if ev.name not in self.event_handlers:
+            logger.warning("No handler is registered for {0}".format(ev.name))
+
         for handler in self.event_handlers[ev.name]:
             handler(**ev.data)
 

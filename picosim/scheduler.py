@@ -23,7 +23,8 @@ class FCFSScheduler:
         return len(self.queue)
 
     def _job_submitted(self, job, hosts):
-        logger.info("Job {0} subimitted".format(job.name))
+        logger.info("Job {0} subimitted at {1}".format(
+            job.name, self.simulator.time))
         # If queue is not empty or hosts are occupied
         if self.queue or not self.selector.test(job, hosts):
             logger.info("Job {0} queued".format(job.name))
@@ -34,7 +35,8 @@ class FCFSScheduler:
         self._run_job(job, hosts)
 
     def _job_finished(self, job, hosts):
-        logger.info("Job {0} finished".format(job.name))
+        logger.info("Job {0} finished at {1}".format(
+            job.name, self.simulator.time))
 
         job.status = JobStatus.FINISHED
 
@@ -58,7 +60,8 @@ class FCFSScheduler:
         self._run_job(job, hosts)
 
     def _run_job(self, job, hosts):
-        logger.info("Starting job {0}".format(job.name))
+        logger.info("Job {0} starting at {1}".format(
+            job.name, self.simulator.time))
 
         job.status = JobStatus.RUNNING
 

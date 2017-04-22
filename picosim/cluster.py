@@ -1,6 +1,9 @@
 from .host import Host
 from .switch import Switch
 
+from .host_selector import HostSelector
+from .process_mapper import ProcessMapper
+
 
 class Cluster:
     def __init__(self, graph, simulator=None, scheduler=None, router=None,
@@ -18,6 +21,9 @@ class Cluster:
                 self.hosts[name] = Host(name, **attrs)
             elif typ == "switch":
                 self.switches[name] = Switch(name, **attrs)
+
+        assert issubclass(host_selector, HostSelector)
+        assert issubclass(process_mapper, ProcessMapper)
 
         self.scheduler = scheduler(simulator=simulator,
                                    selector=host_selector(),
