@@ -90,4 +90,15 @@ class TestDmodKRouter:
 
     def test_inter_node(self):
         router = DmodKRouter(self.graph, hosts=self.hosts)
+
         path = router.route(self.p0, self.p3)
+        assert path == ["h1", "s3", "s2", "s4", "h4"]
+
+        path = router.route(self.p1, self.p3)
+        assert path == ["h2", "s3", "s2", "s4", "h4"]
+
+        path = router.route(self.p0, self.p2)
+        assert path == ["h1", "s3", "s1", "s4", "h3"]
+
+        path = router.route(self.p1, self.p2)
+        assert path == ["h2", "s3", "s1", "s4", "h3"]
