@@ -50,7 +50,7 @@ class FCFSScheduler:
         if not self.queue:
             return
 
-        job = self.queue.pop()
+        job = self.queue.popleft()
         # If there are not enough available hosts
         if not self.selector.test(job, hosts):
             # Put back job to queue
