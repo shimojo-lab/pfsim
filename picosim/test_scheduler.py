@@ -13,6 +13,9 @@ class TestFCFSScheduler:
         self.job1 = Job("j1", n_procs=32, duration=5.0)
         self.job2 = Job("j2", n_procs=16, duration=5.0)
         self.job3 = Job("j3", n_procs=24, duration=5.0)
+        self.job4 = Job("j4", n_procs=64, duration=5.0)
+        self.job5 = Job("j5", n_procs=64, duration=5.0)
+        self.job6 = Job("j6", n_procs=64, duration=5.0)
 
         self.simulator = Simulator()
         self.scheduler = FCFSScheduler(self.simulator, LinearHostSelector(),
@@ -113,3 +116,41 @@ class TestFCFSScheduler:
 
         self.simulator.run_until(11)
         assert self.job3.status == JobStatus.FINISHED
+
+    def test_job_order(self):
+        self.simulator.schedule("job.submitted", 1.0, job=self.job4,
+                                hosts=self.hosts)
+        self.simulator.schedule("job.submitted", 2.0, job=self.job5,
+                                hosts=self.hosts)
+        self.simulator.schedule("job.submitted", 3.0, job=self.job6,
+                                hosts=self.hosts)
+
+        self.simulator.run_until(1.5)
+        assert self.job4.status == JobStatus.RUNNING
+        assert self.job5.status == JobStatus.CREATED
+        assert self.job6.status == JobStatus.CREATED
+
+        self.simulator.run_until(2.5)
+        assert self.job4.status == JobStatus.RUNNING
+        assert self.job5.status == JobStatus.QUEUED
+        assert self.job6.status == JobStatus.CREATED
+
+        self.simulator.run_until(3.5)
+        assert self.job4.status == JobStatus.RUNNING
+        assert self.job5.status == JobStatus.QUEUED
+        assert self.job6.status == JobStatus.QUEUED
+
+        self.simulator.run_until(7)
+        assert self.job4.status == JobStatus.FINISHED
+        assert self.job5.status == JobStatus.RUNNING
+        assert self.job6.status == JobStatus.QUEUED
+
+        self.simulator.run_until(12)
+        assert self.job4.status == JobStatus.FINISHED
+        assert self.job5.status == JobStatus.FINISHED
+        assert self.job6.status == JobStatus.RUNNING
+
+        self.simulator.run_until(17)
+        assert self.job4.status == JobStatus.FINISHED
+        assert self.job5.status == JobStatus.FINISHED
+        assert self.job6.status == JobStatus.FINISHED
