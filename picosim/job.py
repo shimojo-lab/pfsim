@@ -1,5 +1,6 @@
 import json
 import tarfile
+from collections import defaultdict
 from enum import Enum
 from pathlib import Path
 
@@ -17,6 +18,7 @@ class Job:
         if traffic_matrix is None:
             traffic_matrix = []
         self.traffic_matrix = traffic_matrix
+        self.link_usage = defaultdict(lambda: defaultdict(lambda: 0.0))
 
         self.hosts = []
         self.procs = []
@@ -36,7 +38,8 @@ class Job:
                 if traffic <= 0.0:
                     continue
 
-                self.simulator.schedule("job.communicate",
+                self.simulator.schedule("job.message",
+                                        job=job,
                                         src_proc=self.procs[src],
                                         dst_proc=self.procs[dst],
                                         traffic=traffic)

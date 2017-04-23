@@ -31,16 +31,24 @@ class Cluster:
         self.router = router(graph=self.graph, hosts=self.hosts.values(),
                              switches=self.switches.values())
         self.simulator = simulator
-        self.simulator.register("job.communicate", self.communicate)
+        self.simulator.register("job.message", self._job_message)
+        self.simulator.register("job.finished", self._job_finished)
 
         for u, v, attrs in self.graph.edges_iter(data=True):
             attrs["traffic"] = 0
 
-    def communicate(self, src_proc, dst_proc, traffic):
+    def _job_message(self, job, src_proc, dst_proc, traffic):
         path = self.router.route(src_proc, dst_proc)
+
         for u, v in zip(path[1:], path[:-1]):
             edge = self.graph[u][v]
             edge["traffic"] += traffic
+            job.link_usage[u][v] += traffic
+
+    def _job_finished(self, job, hosts):
+        for u, v_traffic in job.link_usage.items():
+            for v, traffic in v_traffic.items():
+                self.graph[u][v]["traffic"] -= traffic
 
     def submit_job(self, job, time=0.0):
         self.simulator.schedule("job.submitted", job=job, time=time,
