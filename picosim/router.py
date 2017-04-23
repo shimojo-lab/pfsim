@@ -27,13 +27,20 @@ class Router(ABC):
 class RandomRouter(Router):
     def __init__(self, graph, hosts=None, switches=None):
         super().__init__(graph, hosts=hosts, switches=switches)
+        self.memo = {}
 
     def route(self, src_proc, dst_proc):
         src = src_proc.host
         dst = dst_proc.host
-        paths = list(nx.all_shortest_paths(self.graph, src.name, dst.name))
 
-        return random.choice(paths)
+        if (src, dst) in self.memo:
+            return self.memo[(src, dst)]
+
+        paths = list(nx.all_shortest_paths(self.graph, src.name, dst.name))
+        path = random.choice(paths)
+        self.memo[(src, dst)] = path
+
+        return path
 
 
 class DmodKRouter(Router):

@@ -40,9 +40,9 @@ class TestRandomRouter:
 
     def test_inter_node(self):
         router = RandomRouter(self.graph)
-        paths = router.route(self.p0, self.p2)
+        path = router.route(self.p0, self.p2)
 
-        assert paths == ["h1", "s1", "h2"] or paths == ["h1", "s2", "h2"]
+        assert path == ["h1", "s1", "h2"] or path == ["h1", "s2", "h2"]
 
 
 class TestDmodKRouter:
