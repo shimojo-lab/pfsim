@@ -1,5 +1,5 @@
 class Host:
-    def __init__(self, name, capacity=0, **kwargs):
+    def __init__(self, name, capacity=1, **kwargs):
         # Host name
         self.name = name
         # Maximum number of processes which this host can accomodate
