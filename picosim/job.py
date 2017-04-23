@@ -8,13 +8,15 @@ JobStatus = Enum("JobStatus", "CREATED QUEUED RUNNING FINISHED")
 
 
 class Job:
-    def __init__(self, name, n_procs=1, duration=0.0, traffic_matrix=[],
+    def __init__(self, name, n_procs=1, duration=0.0, traffic_matrix=None,
                  simulator=None):
         self.simulator = simulator
         self.name = name
         self.n_procs = n_procs
-        self.traffic_matrix = traffic_matrix
         self.duration = duration
+        if traffic_matrix is None:
+            traffic_matrix = []
+        self.traffic_matrix = traffic_matrix
 
         self.hosts = []
         self.procs = []

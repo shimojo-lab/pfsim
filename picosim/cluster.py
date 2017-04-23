@@ -28,7 +28,8 @@ class Cluster:
         self.scheduler = scheduler(simulator=simulator,
                                    selector=host_selector(),
                                    mapper=process_mapper())
-        self.router = router()
+        self.router = router(graph=self.graph, hosts=self.hosts.values(),
+                             switches=self.switches.values())
         self.simulator = simulator
         self.simulator.register("job.communicate", self.communicate)
 
@@ -36,7 +37,7 @@ class Cluster:
             attrs["traffic"] = 0
 
     def communicate(self, src_proc, dst_proc, traffic):
-        path = self.router.route(src_proc, dst_proc, self.graph)
+        path = self.router.route(src_proc, dst_proc)
         for u, v in zip(path[1:], path[:-1]):
             edge = self.graph[u][v]
             edge["traffic"] += traffic

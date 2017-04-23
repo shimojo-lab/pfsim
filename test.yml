@@ -3,7 +3,7 @@ topology: milk.graphml
 scheduler: picosim.scheduler.FCFSScheduler
 host_selector: picosim.host_selector.LinearHostSelector
 process_mapper: picosim.process_mapper.LinearProcessMapper
-router: picosim.router.RandomRouter
+router: picosim.router.DmodKRouter
 
 jobs:
   - submit_at: 0.0
