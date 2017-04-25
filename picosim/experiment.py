@@ -1,6 +1,11 @@
-import yaml
-import networkx as nx
 from importlib import import_module
+from pathlib import Path
+
+import networkx as nx
+
+from schema import And, Or, Schema
+
+import yaml
 
 from .cluster import Cluster
 from .job import Job
@@ -8,6 +13,25 @@ from .simulator import Simulator
 
 
 class Experiment:
+    SCENARIO_SCHEMA = Schema({
+        "topology": And(str, lambda p: Path(p).exists(),
+                        error="Topology file must exist"),
+        "algorithms": {
+            "scheduler": str,
+            "host_selector": str,
+            "process_mapper": str,
+            "router": str
+        },
+        "output": str,
+        "jobs": [{
+            "submit_at": Or(float, int,
+                            error="Job submission time must be a number"),
+            "duration": Or(float, int,
+                           error="Job duration must be a number"),
+            "trace": And(str),
+        }]
+    })
+
     def __init__(self, cluster, simulator):
         self.cluster = cluster
         self.simulator = simulator
@@ -20,25 +44,31 @@ class Experiment:
     @classmethod
     def from_yaml(cls, path):
         with open(path) as f:
-            conf = yaml.load(f)
+            conf = cls._validate_conf(yaml.load(f))
 
         simulator = Simulator()
 
+        algorithms_conf = conf["algorithms"]
         cluster = Cluster(
             graph=nx.read_graphml(conf["topology"]),
-            host_selector=cls.load_class(conf["host_selector"]),
-            process_mapper=cls.load_class(conf["process_mapper"]),
-            scheduler=cls.load_class(conf["scheduler"]),
-            router=cls.load_class(conf["router"]),
+            host_selector=cls.load_class(algorithms_conf["host_selector"]),
+            process_mapper=cls.load_class(algorithms_conf["process_mapper"]),
+            scheduler=cls.load_class(algorithms_conf["scheduler"]),
+            router=cls.load_class(algorithms_conf["router"]),
             simulator=simulator
         )
 
         for job_conf in conf["jobs"]:
-            job = Job.from_trace(job_conf["trace"], job_conf["duration"],
+            trace_path = (Path(path) / ".." / job_conf["trace"]).resolve()
+            job = Job.from_trace(str(trace_path), job_conf["duration"],
                                  simulator=simulator)
             cluster.submit_job(job, time=job_conf["submit_at"])
 
         return Experiment(cluster, simulator)
+
+    @classmethod
+    def _validate_conf(cls, conf):
+        return cls.SCENARIO_SCHEMA.validate(conf)
 
     @classmethod
     def load_class(cls, path):
