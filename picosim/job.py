@@ -9,6 +9,8 @@ JobStatus = Enum("JobStatus", "CREATED QUEUED RUNNING FINISHED")
 
 
 class Job:
+    _serial = 0
+
     def __init__(self, name, n_procs=1, duration=0.0, traffic_matrix=None,
                  simulator=None):
         self.simulator = simulator
@@ -72,5 +74,7 @@ class Job:
             for dst, traffic in enumerate(vec):
                 matrix[src][dst] = traffic
 
-        name = Path(path).name
+        name = "{0}-{1}".format(Path(path).name, cls._serial)
+        cls._serial += 1
+
         return cls(name, n_procs, duration, matrix, simulator)
