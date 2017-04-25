@@ -7,9 +7,9 @@ algorithms:
   process_mapper: picosim.process_mapper.LinearProcessMapper
   router: picosim.router.DmodKRouter
 
-output: result.graphml
+output: output/milk-fcfs-liner-linear-dmodk.graphml
 
 jobs:
   - submit_at: 0.0
     duration: 100.0
-    trace: data/cg-c-128.tar.gz
+    trace: traces/cg-c-128.tar.gz

@@ -1,4 +1,5 @@
 from importlib import import_module
+from os import makedirs
 from pathlib import Path
 
 import networkx as nx
@@ -32,14 +33,16 @@ class Experiment:
         }]
     })
 
-    def __init__(self, cluster, simulator):
+    def __init__(self, cluster, simulator, output):
         self.cluster = cluster
         self.simulator = simulator
+        self.output = output
 
     def run(self):
         self.simulator.run()
 
-        nx.write_graphml(self.cluster.graph, "result.graphml")
+        makedirs(str(Path(self.output).parent), mode=0o777, exist_ok=True)
+        nx.write_graphml(self.cluster.graph, self.output)
 
     @classmethod
     def from_yaml(cls, path):
@@ -59,12 +62,14 @@ class Experiment:
         )
 
         for job_conf in conf["jobs"]:
-            trace_path = (Path(path) / ".." / job_conf["trace"]).resolve()
+            trace_path = Path(path).parent / job_conf["trace"]
             job = Job.from_trace(str(trace_path), job_conf["duration"],
                                  simulator=simulator)
             cluster.submit_job(job, time=job_conf["submit_at"])
 
-        return Experiment(cluster, simulator)
+        output = str(Path(path).parent / conf["output"])
+
+        return Experiment(cluster, simulator, output)
 
     @classmethod
     def _validate_conf(cls, conf):
