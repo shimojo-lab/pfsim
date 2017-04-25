@@ -1,7 +1,9 @@
 import logging.config
 
 
-def configure_logging():
+def configure_logging(verbose=False):
+    loglevel = "DEBUG" if verbose else "INFO"
+
     logging.config.dictConfig({
         "version": 1,
         "formatters": {
@@ -20,7 +22,7 @@ def configure_logging():
             }
         },
         "root": {
-            "level": "INFO",
+            "level": loglevel,
             "handlers": ["default"],
         },
         "disable_existing_loggers": False
