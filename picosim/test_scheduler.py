@@ -103,7 +103,7 @@ class TestFCFSScheduler:
         assert self.job1.status == JobStatus.RUNNING
         assert self.job2.status == JobStatus.RUNNING
         assert self.job3.status == JobStatus.QUEUED
-        assert self.scheduler.n_waiting == 1
+        assert self.scheduler.n_queued == 1
 
         self.simulator.run_until(6.5)
         assert self.job1.status == JobStatus.FINISHED

@@ -1,4 +1,5 @@
 from importlib import import_module
+from logging import getLogger
 from os import makedirs
 from pathlib import Path
 
@@ -11,6 +12,8 @@ import yaml
 from .cluster import Cluster
 from .job import Job
 from .simulator import Simulator
+
+logger = getLogger(__name__)
 
 
 class Experiment:
@@ -43,6 +46,11 @@ class Experiment:
 
         makedirs(str(Path(self.output).parent), mode=0o777, exist_ok=True)
         nx.write_graphml(self.cluster.graph, self.output)
+
+        logger.info("Job stats: {0} running, {1} queued, {2} finished ".format(
+            self.cluster.scheduler.n_running,
+            self.cluster.scheduler.n_running,
+            self.cluster.scheduler.n_finished))
 
     @classmethod
     def from_yaml(cls, path):

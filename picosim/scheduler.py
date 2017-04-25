@@ -15,11 +15,14 @@ class FCFSScheduler:
         self.selector = selector
         self.mapper = mapper
 
+        self.n_running = 0
+        self.n_finished = 0
+
         simulator.register("job.submitted", self._job_submitted)
         simulator.register("job.finished", self._job_finished)
 
     @property
-    def n_waiting(self):
+    def n_queued(self):
         return len(self.queue)
 
     def _job_submitted(self, job, hosts):
@@ -27,7 +30,8 @@ class FCFSScheduler:
             job.name, self.simulator.time))
         # If queue is not empty or hosts are occupied
         if self.queue or not self.selector.test(job, hosts):
-            logger.info("Job {0} queued".format(job.name))
+            logger.info("Job {0} queued ({1} jobs queued)".format(
+                job.name, self.n_queued))
             job.status = JobStatus.QUEUED
             self.queue.append(job)
             return
@@ -38,6 +42,8 @@ class FCFSScheduler:
         logger.info("Job {0} finished at {1}".format(
             job.name, self.simulator.time))
 
+        self.n_running -= 1
+        self.n_finished += 1
         job.status = JobStatus.FINISHED
 
         # Release hosts
@@ -63,6 +69,7 @@ class FCFSScheduler:
         logger.info("Job {0} starting at {1}".format(
             job.name, self.simulator.time))
 
+        self.n_running += 1
         job.status = JobStatus.RUNNING
 
         # Select and allocate hosts
