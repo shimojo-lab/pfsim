@@ -10,6 +10,7 @@ from schema import And, Or, Schema
 import yaml
 
 from .cluster import Cluster
+from .collector import SchedulerMetricsCollector
 from .job import Job
 from .simulator import Simulator
 
@@ -36,10 +37,11 @@ class Experiment:
         }]
     })
 
-    def __init__(self, cluster, simulator, output):
+    def __init__(self, cluster, simulator, output, collectors=[]):
         self.cluster = cluster
         self.simulator = simulator
         self.output = output
+        self.collectors = []
 
     def run(self):
         self.simulator.run()
@@ -51,6 +53,9 @@ class Experiment:
             self.cluster.scheduler.n_running,
             self.cluster.scheduler.n_running,
             self.cluster.scheduler.n_finished))
+
+        for collector in self.collectors:
+            collector.report()
 
     @classmethod
     def from_yaml(cls, path):
@@ -77,7 +82,12 @@ class Experiment:
 
         output = str(Path(path).parent / conf["output"])
 
-        return Experiment(cluster, simulator, output)
+        experiment = Experiment(cluster, simulator, output)
+
+        experiment.collectors.append(SchedulerMetricsCollector(simulator,
+            cluster))
+
+        return experiment
 
     @classmethod
     def _validate_conf(cls, conf):

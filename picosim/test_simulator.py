@@ -47,3 +47,21 @@ class TestSimulator:
 
         calls = [call(x="foo"), call(x="hoge"), call(x="piyo")]
         _handler.assert_has_calls(calls)
+
+    def test_handler_priority(self):
+        x = 0
+
+        def _handler1():
+            nonlocal x
+            assert x == 0
+            x += 1
+
+        def _handler2():
+            nonlocal x
+            assert x == 1
+            x += 1
+
+        self.sim.register("test", _handler1, prio=1)
+        self.sim.register("test", _handler2, prio=0)
+        self.sim.schedule("test")
+        self.sim.run()

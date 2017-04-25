@@ -1,6 +1,7 @@
 from collections import defaultdict
 from heapq import heappop, heappush
 from logging import getLogger
+from operator import itemgetter
 
 logger = getLogger(__name__)
 
@@ -44,7 +45,7 @@ class Simulator:
         if ev.name not in self.event_handlers:
             logger.warning("No handler is registered for {0}".format(ev.name))
 
-        for handler in self.event_handlers[ev.name]:
+        for prio, handler in self.event_handlers[ev.name]:
             handler(**ev.data)
 
     def schedule_after(self, name, time=None, **kwargs):
@@ -57,5 +58,8 @@ class Simulator:
         ev = Event(name, time, kwargs)
         heappush(self.event_queue, (ev.time, ev))
 
-    def register(self, name, handler):
-        self.event_handlers[name].append(handler)
+    def register(self, name, handler, prio=0):
+        handlers = self.event_handlers[name]
+
+        handlers.append((prio, handler))
+        handlers.sort(key=itemgetter(0), reverse=True)
