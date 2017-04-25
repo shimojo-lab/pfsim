@@ -12,7 +12,7 @@ class TimeSeries:
 
         self.max = -inf
         self.min = inf
-        self.mean = 0
+        self.mean = 0.0
 
     def add(self, time, value):
         if self.last_time is not None and time < self.last_time:
@@ -25,7 +25,7 @@ class TimeSeries:
         self.min = min(self.min, value)
         if self.last_time is not None:
             w = (time - self.last_time) / time
-            self.mean = self.mean * (1 - w) + value * w
+            self.mean = self.mean * (1 - w) + self.data[-1][1] * w
 
         self.data.append((time, value))
         self.last_time = time
