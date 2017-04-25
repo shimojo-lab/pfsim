@@ -1,5 +1,5 @@
 ---
-topology: milk.graphml
+topology: topologies/milk.graphml
 
 algorithms:
   scheduler: picosim.scheduler.FCFSScheduler
