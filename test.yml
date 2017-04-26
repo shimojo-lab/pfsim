@@ -1,5 +1,5 @@
 ---
-duration: 100000.0
+duration: 10000.0
 
 topology: topologies/milk.graphml
 
