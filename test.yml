@@ -17,5 +17,5 @@ jobs:
     duration:
       distribution: picosim.math.ExponentialDistribution
       params:
-        lambd: 0.3
+        lambd: 0.2
     trace: traces/cg-c-128.tar.gz
