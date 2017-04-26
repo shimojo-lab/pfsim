@@ -1,6 +1,5 @@
 from importlib import import_module
 from logging import getLogger
-from os import makedirs
 from pathlib import Path
 
 import networkx as nx
@@ -11,7 +10,7 @@ import yaml
 
 from .cluster import Cluster
 from .collector import InterconnectMetricsCollector, SchedulerMetricsCollector
-from .job import Job
+from .job_generator import JobGenerator
 from .simulator import Simulator
 
 logger = getLogger(__name__)
@@ -19,6 +18,7 @@ logger = getLogger(__name__)
 
 class Experiment:
     SCENARIO_SCHEMA = Schema({
+        "duration": Or(int, float),
         "topology": And(str, lambda p: Path(p).exists(),
                         error="Topology file must exist"),
         "algorithms": {
@@ -27,31 +27,35 @@ class Experiment:
             "process_mapper": str,
             "router": str
         },
-        "output": str,
         "jobs": [{
-            "submit_at": Or(float, int,
-                            error="Job submission time must be a number"),
-            "duration": Or(float, int,
-                           error="Job duration must be a number"),
-            "trace": And(str),
+            "submit": {
+                "distribution": str,
+                "params": {
+                    str: Or(str, int, float)
+                }
+            },
+            "duration": {
+                "distribution": str,
+                "params": {
+                    str: Or(str, int, float)
+                }
+            },
+            "trace": str
         }]
     })
 
-    def __init__(self, cluster, simulator, output, collectors=[]):
+    def __init__(self, cluster, simulator, collectors=[]):
         self.cluster = cluster
         self.simulator = simulator
-        self.output = output
         self.collectors = collectors
         self.conf = None
+        self.job_generators = []
 
     def run(self):
         self.report()
         self.cluster.report()
 
-        self.simulator.run()
-
-        makedirs(str(Path(self.output).parent), mode=0o777, exist_ok=True)
-        nx.write_graphml(self.cluster.graph, self.output)
+        self.simulator.run_until(self.conf["duration"])
 
         for collector in self.collectors:
             collector.report()
@@ -59,6 +63,8 @@ class Experiment:
     def report(self):
         logger.info("Starting experiment with following configuration:")
         logger.info("=" * 80)
+        logger.info("Duration:                  {0}".format(
+            self.conf["duration"]))
         logger.info("Cluster Topology:          {0}".format(
             self.conf["topology"]))
         logger.info("Host Selection Algorithm:  {0}".format(
@@ -67,8 +73,6 @@ class Experiment:
             self.conf["algorithms"]["process_mapper"]))
         logger.info("Routing Algorithm:         {0}".format(
             self.conf["algorithms"]["router"]))
-        logger.info("Output Path:               {0}".format(
-            self.conf["output"]))
         logger.info("=" * 80)
 
     @classmethod
@@ -88,15 +92,24 @@ class Experiment:
             simulator=simulator
         )
 
+        experiment = Experiment(cluster, simulator)
+
         for job_conf in conf["jobs"]:
-            trace_path = Path(path).parent / job_conf["trace"]
-            job = Job.from_trace(str(trace_path), job_conf["duration"],
-                                 simulator=simulator)
-            cluster.submit_job(job, time=job_conf["submit_at"])
+            job_submit_conf = job_conf["submit"]
+            job_duration_conf = job_conf["duration"]
 
-        output = str(Path(path).parent / conf["output"])
+            submit_dist = cls._load_class(job_submit_conf["distribution"])
+            duration_dist = cls._load_class(job_duration_conf["distribution"])
 
-        experiment = Experiment(cluster, simulator, output)
+            job_gen = JobGenerator(
+                submit=submit_dist(**job_submit_conf["params"]),
+                duration=duration_dist(**job_duration_conf["params"]),
+                trace=str(Path(path).parent / job_conf["trace"]),
+                hosts=cluster.hosts,
+                simulator=simulator
+            )
+
+            experiment.job_generators.append(job_gen)
 
         experiment.collectors = [
             InterconnectMetricsCollector(simulator, cluster),

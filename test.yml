@@ -1,4 +1,6 @@
 ---
+duration: 100000.0
+
 topology: topologies/milk.graphml
 
 algorithms:
@@ -7,36 +9,13 @@ algorithms:
   process_mapper: picosim.process_mapper.LinearProcessMapper
   router: picosim.router.DmodKRouter
 
-output: output/milk-fcfs-liner-linear-dmodk.graphml
-
 jobs:
-  - submit_at: 0.0
-    duration: 50.0
-    trace: traces/cg-c-128.tar.gz
-  - submit_at: 10.0
-    duration: 50.0
-    trace: traces/cg-c-128.tar.gz
-  - submit_at: 20.0
-    duration: 50.0
-    trace: traces/cg-c-128.tar.gz
-  - submit_at: 30.0
-    duration: 50.0
-    trace: traces/cg-c-128.tar.gz
-  - submit_at: 40.0
-    duration: 50.0
-    trace: traces/cg-c-128.tar.gz
-  - submit_at: 50.0
-    duration: 50.0
-    trace: traces/cg-c-128.tar.gz
-  - submit_at: 60.0
-    duration: 50.0
-    trace: traces/cg-c-128.tar.gz
-  - submit_at: 70.0
-    duration: 50.0
-    trace: traces/cg-c-128.tar.gz
-  - submit_at: 80.0
-    duration: 50.0
-    trace: traces/cg-c-128.tar.gz
-  - submit_at: 90.0
-    duration: 50.0
+  - submit:
+      distribution: picosim.math.ExponentialDistribution
+      params:
+        lambd: 0.1
+    duration:
+      distribution: picosim.math.ExponentialDistribution
+      params:
+        lambd: 0.2
     trace: traces/cg-c-128.tar.gz

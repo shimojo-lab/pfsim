@@ -10,9 +10,10 @@ JobStatus = Enum("JobStatus", "CREATED QUEUED RUNNING FINISHED")
 
 class Job:
     _serial = 0
+    _traffic_matrix_cache = {}
 
     def __init__(self, name, n_procs=1, duration=0.0, traffic_matrix=None,
-                 simulator=None):
+                 generator=None, simulator=None):
         self.simulator = simulator
         self.name = name
         self.n_procs = n_procs
@@ -22,6 +23,7 @@ class Job:
         self.traffic_matrix = traffic_matrix
         self.link_usage = defaultdict(lambda: defaultdict(lambda: 0))
         self.link_flows = defaultdict(lambda: defaultdict(lambda: 0))
+        self.generator = generator
 
         self.hosts = []
         self.procs = []
@@ -52,7 +54,19 @@ class Job:
                                              self.status.name)
 
     @classmethod
-    def from_trace(cls, path, duration=0.0, simulator=None):
+    def from_trace(cls, path, duration=0.0, generator=None, simulator=None):
+        matrix = cls._load_traffic_matrix(path)
+        n_procs = len(matrix)
+        name = "{0}-{1}".format(Path(path).name, cls._serial)
+        cls._serial += 1
+
+        return cls(name, n_procs, duration, matrix, generator, simulator)
+
+    @classmethod
+    def _load_traffic_matrix(cls, path):
+        if path in cls._traffic_matrix_cache:
+            return cls._traffic_matrix_cache[path]
+
         tmp = {}
 
         with tarfile.open(path, "r:gz") as tar:
@@ -75,7 +89,6 @@ class Job:
             for dst, traffic in enumerate(vec):
                 matrix[src][dst] = traffic
 
-        name = "{0}-{1}".format(Path(path).name, cls._serial)
-        cls._serial += 1
+        cls._traffic_matrix_cache[path] = matrix
 
-        return cls(name, n_procs, duration, matrix, simulator)
+        return matrix

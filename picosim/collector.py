@@ -17,6 +17,7 @@ class TimeSeries:
         self.max = -inf
         self.min = inf
         self.mean = 0.0
+        self.m2 = 0.0
 
     def add(self, time, value):
         if self.current_time is None:
@@ -30,21 +31,30 @@ class TimeSeries:
         # Update statistics
         self.max = max(self.max, self.current_value)
         self.min = min(self.min, self.current_value)
+        self.count += 1
+
+        delta = self.current_value - self.mean
         w = (time - self.current_time) / time
         self.mean = self.mean * (1.0 - w) + self.current_value * w
-        self.count += 1
+        delta2 = self.current_value - self.mean
+        self.m2 += delta * delta2
 
         if self.store:
             self.data.append((self.current_time, self.current_value))
         self.current_time = time
         self.current_value = value
 
+    @property
+    def variance(self):
+        return self.m2 / (self.count - 1)
+
     def report(self):
         logger.info("{0:=^80}".format(" " + self.name + "  "))
-        logger.info("Max: {0}".format(self.max))
-        logger.info("Min: {0}".format(self.min))
-        logger.info("Mean: {0}".format(self.mean))
-        logger.info("Count: {0}".format(self.count))
+        logger.info("Max:       {0}".format(self.max))
+        logger.info("Min:       {0}".format(self.min))
+        logger.info("Mean:      {0}".format(self.mean))
+        logger.info("Count:     {0}".format(self.count))
+        logger.info("Variance:  {0}".format(self.variance))
 
 
 class SchedulerMetricsCollector:
@@ -52,7 +62,8 @@ class SchedulerMetricsCollector:
         self.simulator = simulator
         self.cluster = cluster
 
-        self.n_queued = TimeSeries("Scheduler Queue Length")
+        self.n_queued = TimeSeries("Number of Waiting Jobs")
+        self.n_system = TimeSeries("Number of Jobs in System")
         self.n_running = TimeSeries("Number of Running Jobs")
         self.n_finished = TimeSeries("Number of Finished Jobs")
 
@@ -64,11 +75,14 @@ class SchedulerMetricsCollector:
         time = self.simulator.time
 
         self.n_queued.add(time, self.cluster.scheduler.n_queued)
+        self.n_system.add(time, self.cluster.scheduler.n_queued +
+                          self.cluster.scheduler.n_running)
         self.n_running.add(time, self.cluster.scheduler.n_running)
         self.n_finished.add(time, self.cluster.scheduler.n_finished)
 
     def report(self):
         self.n_queued.report()
+        self.n_system.report()
         self.n_running.report()
         self.n_finished.report()
 
