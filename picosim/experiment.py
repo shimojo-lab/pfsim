@@ -67,10 +67,10 @@ class Experiment:
         algorithms_conf = conf["algorithms"]
         cluster = Cluster(
             graph=nx.read_graphml(conf["topology"]),
-            host_selector=cls.load_class(algorithms_conf["host_selector"]),
-            process_mapper=cls.load_class(algorithms_conf["process_mapper"]),
-            scheduler=cls.load_class(algorithms_conf["scheduler"]),
-            router=cls.load_class(algorithms_conf["router"]),
+            host_selector=cls._load_class(algorithms_conf["host_selector"]),
+            process_mapper=cls._load_class(algorithms_conf["process_mapper"]),
+            scheduler=cls._load_class(algorithms_conf["scheduler"]),
+            router=cls._load_class(algorithms_conf["router"]),
             simulator=simulator
         )
 
@@ -96,7 +96,7 @@ class Experiment:
         return cls.SCENARIO_SCHEMA.validate(conf)
 
     @classmethod
-    def load_class(cls, path):
+    def _load_class(cls, path):
         mod_name, cls_name = path.rsplit(".", 1)
         mod = import_module(mod_name)
 
