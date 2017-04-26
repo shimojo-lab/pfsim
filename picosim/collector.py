@@ -88,7 +88,8 @@ class InterconnectMetricsCollector:
 
         max_congestion = -inf
         for u, v, attrs in self.cluster.graph.edges_iter(data=True):
-            max_congestion = max(attrs["traffic"], max_congestion)
+            congestion = attrs["traffic"] / attrs["capacity"]
+            max_congestion = max(congestion, max_congestion)
 
         self.max_congestion.add(time, max_congestion)
 
