@@ -27,6 +27,8 @@ class Simulator:
         self.time = 0.0
         self.n_events = 0
 
+        self.schedule("simulator.started")
+
     def run(self):
         while self.event_queue:
             self.step()
