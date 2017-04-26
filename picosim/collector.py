@@ -5,7 +5,8 @@ logger = getLogger(__name__)
 
 
 class TimeSeries:
-    def __init__(self, store=True):
+    def __init__(self, name, store=True):
+        self.name = name
         self.store = store
         self.data = []
         self.current_time = None
@@ -39,6 +40,7 @@ class TimeSeries:
         self.current_value = value
 
     def report(self):
+        logger.info("{0:=^80}".format(" " + self.name + "  "))
         logger.info("Max: {0}".format(self.max))
         logger.info("Min: {0}".format(self.min))
         logger.info("Mean: {0}".format(self.mean))
@@ -50,9 +52,9 @@ class SchedulerMetricsCollector:
         self.simulator = simulator
         self.cluster = cluster
 
-        self.n_queued = TimeSeries()
-        self.n_running = TimeSeries()
-        self.n_finished = TimeSeries()
+        self.n_queued = TimeSeries("Scheduler Queue Length")
+        self.n_running = TimeSeries("Number of Running Jobs")
+        self.n_finished = TimeSeries("Number of Finished Jobs")
 
         simulator.register("job.submitted", self._collect, prio=-inf)
         simulator.register("job.started", self._collect, prio=-inf)
@@ -66,11 +68,8 @@ class SchedulerMetricsCollector:
         self.n_finished.add(time, self.cluster.scheduler.n_finished)
 
     def report(self):
-        logger.info("============= Scheduler Queue Length =================")
         self.n_queued.report()
-        logger.info("============= Number of Running Jobs =================")
         self.n_running.report()
-        logger.info("============= Number of Finished Jobs ================")
         self.n_finished.report()
 
 
@@ -79,7 +78,7 @@ class InterconnectMetricsCollector:
         self.simulator = simulator
         self.cluster = cluster
 
-        self.max_congestion = TimeSeries()
+        self.max_congestion = TimeSeries("Maximum Congestion")
 
         simulator.register("job.message", self._collect, prio=-inf)
 
@@ -94,5 +93,4 @@ class InterconnectMetricsCollector:
         self.max_congestion.add(time, max_congestion)
 
     def report(self):
-        logger.info("============= Maximum Congestion =================")
         self.max_congestion.report()

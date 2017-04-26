@@ -41,21 +41,34 @@ class Experiment:
         self.cluster = cluster
         self.simulator = simulator
         self.output = output
-        self.collectors = []
+        self.collectors = collectors
+        self.conf = None
 
     def run(self):
+        self.report()
+
         self.simulator.run()
 
         makedirs(str(Path(self.output).parent), mode=0o777, exist_ok=True)
         nx.write_graphml(self.cluster.graph, self.output)
 
-        logger.info("Job stats: {0} running, {1} queued, {2} finished ".format(
-            self.cluster.scheduler.n_running,
-            self.cluster.scheduler.n_running,
-            self.cluster.scheduler.n_finished))
-
         for collector in self.collectors:
             collector.report()
+
+    def report(self):
+        logger.info("Starting experiment with following configuration:")
+        logger.info("=" * 80)
+        logger.info("Cluster Topology:          {0}".format(
+            self.conf["topology"]))
+        logger.info("Host Selection Algorithm:  {0}".format(
+            self.conf["algorithms"]["host_selector"]))
+        logger.info("Process Mapping Algorithm: {0}".format(
+            self.conf["algorithms"]["process_mapper"]))
+        logger.info("Routing Algorithm:         {0}".format(
+            self.conf["algorithms"]["router"]))
+        logger.info("Output Path:               {0}".format(
+            self.conf["output"]))
+        logger.info("=" * 80)
 
     @classmethod
     def from_yaml(cls, path):
@@ -88,6 +101,8 @@ class Experiment:
             InterconnectMetricsCollector(simulator, cluster),
             SchedulerMetricsCollector(simulator, cluster)
         ]
+
+        experiment.conf = conf
 
         return experiment
 
