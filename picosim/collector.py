@@ -38,6 +38,12 @@ class TimeSeries:
         self.current_time = time
         self.current_value = value
 
+    def report(self):
+        logger.info("Max: {0}".format(self.max))
+        logger.info("Min: {0}".format(self.min))
+        logger.info("Mean: {0}".format(self.mean))
+        logger.info("Count: {0}".format(self.count))
+
 
 class SchedulerMetricsCollector:
     def __init__(self, simulator, cluster):
@@ -45,6 +51,8 @@ class SchedulerMetricsCollector:
         self.cluster = cluster
 
         self.n_queued = TimeSeries()
+        self.n_running = TimeSeries()
+        self.n_finished = TimeSeries()
 
         simulator.register("job.submitted", self._collect, prio=-inf)
         simulator.register("job.started", self._collect, prio=-inf)
@@ -54,9 +62,13 @@ class SchedulerMetricsCollector:
         time = self.simulator.time
 
         self.n_queued.add(time, self.cluster.scheduler.n_queued)
+        self.n_running.add(time, self.cluster.scheduler.n_running)
+        self.n_finished.add(time, self.cluster.scheduler.n_finished)
 
     def report(self):
-        print("Max:", self.n_queued.max)
-        print("Min:", self.n_queued.min)
-        print("Mean:", self.n_queued.mean)
-        print("Count:", self.n_queued.count)
+        logger.info("============= Scheduler Queue Length =================")
+        self.n_queued.report()
+        logger.info("============= Number of Running Jobs =================")
+        self.n_running.report()
+        logger.info("============= Number of Finished Jobs ================")
+        self.n_finished.report()
