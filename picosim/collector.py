@@ -79,6 +79,7 @@ class InterconnectMetricsCollector:
         self.cluster = cluster
 
         self.max_congestion = TimeSeries("Maximum Congestion")
+        self.max_flows = TimeSeries("Maximum Number of Flows")
 
         simulator.register("job.message", self._collect, prio=-inf)
 
@@ -86,11 +87,16 @@ class InterconnectMetricsCollector:
         time = self.simulator.time
 
         max_congestion = -inf
+        max_flows = -inf
+
         for u, v, attrs in self.cluster.graph.edges_iter(data=True):
             congestion = attrs["traffic"] / attrs["capacity"]
             max_congestion = max(congestion, max_congestion)
+            max_flows = max(attrs["flows"], max_flows)
 
         self.max_congestion.add(time, max_congestion)
+        self.max_flows.add(time, max_flows)
 
     def report(self):
         self.max_congestion.report()
+        self.max_flows.report()

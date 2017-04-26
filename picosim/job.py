@@ -20,7 +20,8 @@ class Job:
         if traffic_matrix is None:
             traffic_matrix = []
         self.traffic_matrix = traffic_matrix
-        self.link_usage = defaultdict(lambda: defaultdict(lambda: 0.0))
+        self.link_usage = defaultdict(lambda: defaultdict(lambda: 0))
+        self.link_flows = defaultdict(lambda: defaultdict(lambda: 0))
 
         self.hosts = []
         self.procs = []
