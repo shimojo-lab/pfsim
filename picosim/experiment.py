@@ -84,8 +84,9 @@ class Experiment:
 
         experiment = Experiment(cluster, simulator, output)
 
-        experiment.collectors.append(SchedulerMetricsCollector(simulator,
-            cluster))
+        experiment.collectors.append(
+            SchedulerMetricsCollector(simulator, cluster)
+        )
 
         return experiment
 

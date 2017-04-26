@@ -1,8 +1,7 @@
 from .host import Host
-from .switch import Switch
-
 from .host_selector import HostSelector
 from .process_mapper import ProcessMapper
+from .switch import Switch
 
 
 class Cluster:
