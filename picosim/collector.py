@@ -8,27 +8,30 @@ class TimeSeries:
     def __init__(self):
         # List of (time, value)
         self.data = []
-        self.last_time = None
+        self.current_time = None
+        self.current_value = None
 
         self.max = -inf
         self.min = inf
         self.mean = 0.0
 
     def add(self, time, value):
-        if self.last_time is not None and time < self.last_time:
-            raise RuntimeError("Cannot add older values")
-        elif self.last_time is not None and time == self.last_time:
-            self.data[-1] = (time, value)
+        if self.current_time is None:
+            self.current_time = time
+            self.current_value = value
+            return
+        if time <= self.current_time:
+            self.current_value = value
             return
 
-        self.max = max(self.max, value)
-        self.min = min(self.min, value)
-        if self.last_time is not None:
-            w = (time - self.last_time) / time
-            self.mean = self.mean * (1 - w) + self.data[-1][1] * w
+        self.max = max(self.max, self.current_value)
+        self.min = min(self.min, self.current_value)
+        w = (time - self.current_time) / time
+        self.mean = self.mean * (1.0 - w) + self.current_value * w
 
-        self.data.append((time, value))
-        self.last_time = time
+        self.data.append((self.current_time, self.current_value))
+        self.current_time = time
+        self.current_value = value
 
 
 class SchedulerMetricsCollector:
