@@ -1,5 +1,5 @@
 from logging import getLogger
-from math import inf
+from math import inf, sqrt
 
 logger = getLogger(__name__)
 
@@ -18,6 +18,7 @@ class TimeSeries:
         self.min = inf
         self.mean = 0.0
         self.m2 = 0.0
+        self.tmp = 0.0
 
     def add(self, time, value):
         if self.current_time is None:
@@ -39,6 +40,8 @@ class TimeSeries:
         delta2 = self.current_value - self.mean
         self.m2 += delta * delta2
 
+        self.tmp += self.current_value
+
         if self.store:
             self.data.append((self.current_time, self.current_value))
         self.current_time = time
@@ -48,6 +51,10 @@ class TimeSeries:
     def variance(self):
         return self.m2 / (self.count - 1)
 
+    @property
+    def sd(self):
+        return sqrt(self.variance)
+
     def report(self):
         logger.info("{0:=^80}".format(" " + self.name + "  "))
         logger.info("Max:       {0}".format(self.max))
@@ -55,6 +62,8 @@ class TimeSeries:
         logger.info("Mean:      {0}".format(self.mean))
         logger.info("Count:     {0}".format(self.count))
         logger.info("Variance:  {0}".format(self.variance))
+        logger.info("SD:        {0}".format(self.sd))
+        logger.info("Tmp:       {0}".format(self.tmp / self.count))
 
 
 class SchedulerMetricsCollector:
@@ -66,10 +75,21 @@ class SchedulerMetricsCollector:
         self.n_system = TimeSeries("Number of Jobs in System")
         self.n_running = TimeSeries("Number of Running Jobs")
         self.n_finished = TimeSeries("Number of Finished Jobs")
+        self.wait_time = TimeSeries("Job Wait Time")
 
         simulator.register("job.submitted", self._collect, prio=-inf)
         simulator.register("job.started", self._collect, prio=-inf)
         simulator.register("job.finished", self._collect, prio=-inf)
+        simulator.register("job.finished", self._finished, prio=-inf)
+
+    def _finished(self, job, **kwargs):
+        #  logger.info("Job {0} finished, wait: {1}, service: {2}".format(
+            #  job.name,
+            #  job.started_at - job.created_at,
+            #  job.finished_at - job.started_at
+        #  ))
+        wait_time = job.started_at - job.created_at
+        self.wait_time.add(self.simulator.time, wait_time)
 
     def _collect(self, **kwargs):
         time = self.simulator.time
@@ -85,6 +105,7 @@ class SchedulerMetricsCollector:
         self.n_system.report()
         self.n_running.report()
         self.n_finished.report()
+        self.wait_time.report()
 
 
 class InterconnectMetricsCollector:

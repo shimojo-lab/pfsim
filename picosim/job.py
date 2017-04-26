@@ -28,15 +28,34 @@ class Job:
         self.hosts = []
         self.procs = []
 
+        self.created_at = None
+        self.started_at = None
+        self.finished_at = None
         self.status = JobStatus.CREATED
 
         if simulator:
             self.simulator = simulator
-            self.simulator.register("job.started", self.started)
+            self.simulator.register("job.submitted", self._submitted)
+            self.simulator.register("job.started", self._started)
+            self.simulator.register("job.finished", self._finished)
 
-    def started(self, job):
+    def _submitted(self, job, hosts):
         if self != job:
             return
+
+        self.created_at = self.simulator.time
+
+    def _finished(self, job, hosts):
+        if self != job:
+            return
+
+        self.finished_at = self.simulator.time
+
+    def _started(self, job):
+        if self != job:
+            return
+
+        self.started_at = self.simulator.time
 
         for src, row in enumerate(self.traffic_matrix):
             for dst, traffic in enumerate(row):
