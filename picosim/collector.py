@@ -1,6 +1,6 @@
 from logging import getLogger
 
-from .statistics import TimedSamples
+from .statistics import Samples, TimeSeriesSamples
 
 from math import inf
 
@@ -12,11 +12,12 @@ class SchedulerMetricsCollector:
         self.simulator = simulator
         self.cluster = cluster
 
-        self.n_queued = TimedSamples("Number of Waiting Jobs")
-        self.n_system = TimedSamples("Number of Jobs in System")
-        self.n_running = TimedSamples("Number of Running Jobs")
-        self.n_finished = TimedSamples("Number of Finished Jobs")
-        self.wait_time = TimedSamples("Job Wait Time")
+        self.n_queued = TimeSeriesSamples("Number of Waiting Jobs")
+        self.n_system = TimeSeriesSamples("Number of Jobs in System")
+        self.n_running = TimeSeriesSamples("Number of Running Jobs")
+        self.n_finished = TimeSeriesSamples("Number of Finished Jobs")
+        self.wait_time = Samples("Job Wait Time")
+        self.response_time = Samples("Job Response Time")
 
         simulator.register("job.submitted", self._collect, prio=-inf)
         simulator.register("job.started", self._collect, prio=-inf)
@@ -24,8 +25,8 @@ class SchedulerMetricsCollector:
         simulator.register("job.finished", self._finished, prio=-inf)
 
     def _finished(self, job, **kwargs):
-        wait_time = job.started_at - job.created_at
-        self.wait_time.add(self.simulator.time, wait_time)
+        self.wait_time.add(job.started_at - job.created_at)
+        self.response_time.add(job.finished_at - job.created_at)
 
     def _collect(self, **kwargs):
         time = self.simulator.time
@@ -42,6 +43,7 @@ class SchedulerMetricsCollector:
         self.n_running.report()
         self.n_finished.report()
         self.wait_time.report()
+        self.response_time.report()
 
 
 class InterconnectMetricsCollector:
@@ -49,8 +51,8 @@ class InterconnectMetricsCollector:
         self.simulator = simulator
         self.cluster = cluster
 
-        self.max_congestion = TimedSamples("Maximum Congestion")
-        self.max_flows = TimedSamples("Maximum Number of Flows")
+        self.max_congestion = TimeSeriesSamples("Maximum Congestion")
+        self.max_flows = TimeSeriesSamples("Maximum Number of Flows")
 
         simulator.register("job.message", self._collect, prio=-inf)
 
