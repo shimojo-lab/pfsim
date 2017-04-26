@@ -1,6 +1,5 @@
 from collections import deque
 from logging import getLogger
-from weakref import proxy
 
 from .job import JobStatus
 from .process import Process
@@ -78,18 +77,18 @@ class FCFSScheduler:
             host.allocated = True
             host.job = job
 
-        job.hosts = [proxy(host) for host in selected_hosts]
+        job.hosts = selected_hosts
 
         # Generate and map processs
         procs = [Process(job.name, rank) for rank in range(job.n_procs)]
         for proc, host in self.mapper.map(procs, selected_hosts).items():
             host.procs.append(proc)
-            proc.host = proxy(host)
+            proc.host = host
 
         # Associate job and processes
         job.procs = procs
         for proc in procs:
-            proc.job = proxy(job)
+            proc.job = job
 
         self.simulator.schedule("job.started", job=job)
         self.simulator.schedule_after("job.finished", job.duration,
