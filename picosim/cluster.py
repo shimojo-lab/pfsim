@@ -1,7 +1,11 @@
+from logging import getLogger
+
 from .host import Host
 from .host_selector import HostSelector
 from .process_mapper import ProcessMapper
 from .switch import Switch
+
+logger = getLogger(__name__)
 
 
 class Cluster:
@@ -59,3 +63,15 @@ class Cluster:
     def submit_job(self, job, time=0.0):
         self.simulator.schedule("job.submitted", job=job, time=time,
                                 hosts=self.hosts)
+
+    def report(self):
+        logger.info("{0:=^80}".format(" " + self.graph.name + "  "))
+        logger.info("Number of Hosts:           {0}".format(
+            len(self.hosts)))
+        logger.info("Number of Allocated Hosts: {0}".format(
+            len([h for h in self.hosts if h.allocated])))
+        logger.info("Number of Switches:        {0}".format(
+            len(self.switches)))
+        logger.info("Number of Links:           {0}".format(
+            self.graph.size()))
+        logger.info("=" * 80)

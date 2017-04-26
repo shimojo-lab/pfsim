@@ -46,6 +46,7 @@ class Experiment:
 
     def run(self):
         self.report()
+        self.cluster.report()
 
         self.simulator.run()
 
