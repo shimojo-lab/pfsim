@@ -72,3 +72,26 @@ class SchedulerMetricsCollector:
         self.n_running.report()
         logger.info("============= Number of Finished Jobs ================")
         self.n_finished.report()
+
+
+class InterconnectMetricsCollector:
+    def __init__(self, simulator, cluster):
+        self.simulator = simulator
+        self.cluster = cluster
+
+        self.max_congestion = TimeSeries()
+
+        simulator.register("job.message", self._collect, prio=-inf)
+
+    def _collect(self, **kwargs):
+        time = self.simulator.time
+
+        max_congestion = -inf
+        for u, v, attrs in self.cluster.graph.edges_iter(data=True):
+            max_congestion = max(attrs["traffic"], max_congestion)
+
+        self.max_congestion.add(time, max_congestion)
+
+    def report(self):
+        logger.info("============= Maximum Congestion =================")
+        self.max_congestion.report()

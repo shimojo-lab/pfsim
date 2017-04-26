@@ -10,7 +10,7 @@ from schema import And, Or, Schema
 import yaml
 
 from .cluster import Cluster
-from .collector import SchedulerMetricsCollector
+from .collector import InterconnectMetricsCollector, SchedulerMetricsCollector
 from .job import Job
 from .simulator import Simulator
 
@@ -84,9 +84,10 @@ class Experiment:
 
         experiment = Experiment(cluster, simulator, output)
 
-        experiment.collectors.append(
+        experiment.collectors = [
+            InterconnectMetricsCollector(simulator, cluster),
             SchedulerMetricsCollector(simulator, cluster)
-        )
+        ]
 
         return experiment
 
