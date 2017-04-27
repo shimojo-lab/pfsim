@@ -46,10 +46,14 @@ class RandomRouter(Router):
 class DmodKRouter(Router):
     def __init__(self, graph, hosts=None, switches=None):
         super().__init__(graph, hosts=hosts, switches=switches)
+        self.memo = {}
 
     def route(self, src_proc, dst_proc):
         src = src_proc.host
         dst = dst_proc.host
+
+        if (src, dst) in self.memo:
+            return self.memo[(src, dst)]
 
         paths = list(nx.all_shortest_paths(self.graph, src.name, dst.name))
         indices = list(range(len(paths)))
@@ -69,4 +73,7 @@ class DmodKRouter(Router):
 
             indices = [j for j in indices if paths[j][i] == switch]
 
-        return paths[indices.pop()]
+        path = paths[indices.pop()]
+        self.memo[(src, dst)] = path
+
+        return path
