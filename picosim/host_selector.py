@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from itertools import chain
 from logging import getLogger
+from random import choice
 
 logger = getLogger(__name__)
 
@@ -16,11 +17,11 @@ class HostSelector(ABC):
     def select(self, job, hosts):
         pass
 
+    def _available_pes(self, hosts):
+        return sum([h.capacity for h in hosts if not h.allocated])
+
 
 class LinearHostSelector(HostSelector):
-    def _available_pes(self, block):
-        return sum([h.capacity for h in block if not h.allocated])
-
     def test(self, job, hosts):
         return self._available_pes(hosts) >= job.n_procs
 
@@ -66,3 +67,22 @@ class LinearHostSelector(HostSelector):
             selected_hosts.append(host)
 
         return selected_hosts
+
+
+class RandomHostSelector(HostSelector):
+    def test(self, job, hosts):
+        return self._available_pes(hosts) >= job.n_procs
+
+    def select(self, job, hosts):
+        if not self.test(job, hosts):
+            return None
+
+        allocated_hosts = []
+        procs_togo = job.n_procs
+
+        while procs_togo > 0:
+            host = choice([h for h in hosts if not h.allocated])
+            allocated_hosts.append(host)
+            procs_togo -= host.capacity
+
+        return sorted(allocated_hosts)
