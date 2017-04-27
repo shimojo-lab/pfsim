@@ -7,14 +7,17 @@ logger = getLogger(__name__)
 
 
 class HostSelector(ABC):
+    def __init__(self, hosts):
+        self.hosts = hosts
+
     # Check if there are enough PEs to run the given job
     @abstractmethod
-    def test(self, job, hosts):
+    def test(self, job):
         pass
 
     # Return a list of hosts which should be allocated to the given job
     @abstractmethod
-    def select(self, job, hosts):
+    def select(self, job):
         pass
 
     def _available_pes(self, hosts):
@@ -22,18 +25,18 @@ class HostSelector(ABC):
 
 
 class LinearHostSelector(HostSelector):
-    def test(self, job, hosts):
-        return self._available_pes(hosts) >= job.n_procs
+    def test(self, job):
+        return self._available_pes(self.hosts) >= job.n_procs
 
-    def select(self, job, hosts):
-        if not self.test(job, hosts):
+    def select(self, job):
+        if not self.test(job):
             return None
 
         unallocated_blocks = []
         in_block = False
 
         # Find all free blocks (consecutive unallocated hosts)
-        for host in hosts:
+        for host in self.hosts:
             if in_block and host.allocated:
                 in_block = False
             elif in_block and not host.allocated:
@@ -70,18 +73,18 @@ class LinearHostSelector(HostSelector):
 
 
 class RandomHostSelector(HostSelector):
-    def test(self, job, hosts):
-        return self._available_pes(hosts) >= job.n_procs
+    def test(self, job):
+        return self._available_pes(self.hosts) >= job.n_procs
 
-    def select(self, job, hosts):
-        if not self.test(job, hosts):
+    def select(self, job):
+        if not self.test(job):
             return None
 
         allocated_hosts = []
         procs_togo = job.n_procs
 
         while procs_togo > 0:
-            host = choice([h for h in hosts if not h.allocated])
+            host = choice([h for h in self.hosts if not h.allocated])
             allocated_hosts.append(host)
             procs_togo -= host.capacity
 

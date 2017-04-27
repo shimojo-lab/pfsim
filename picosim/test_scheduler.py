@@ -18,7 +18,8 @@ class TestFCFSScheduler:
         self.job6 = Job("j6", n_procs=64, duration=5.0)
 
         self.simulator = Simulator()
-        self.scheduler = FCFSScheduler(self.simulator, LinearHostSelector(),
+        self.scheduler = FCFSScheduler(self.simulator,
+                                       LinearHostSelector(hosts=self.hosts),
                                        LinearProcessMapper())
 
     def test_single_job(self):

@@ -29,7 +29,7 @@ class Cluster:
         assert issubclass(process_mapper, ProcessMapper)
 
         self.scheduler = scheduler(simulator=simulator,
-                                   selector=host_selector(),
+                                   selector=host_selector(hosts=self.hosts),
                                    mapper=process_mapper())
         self.router = router(graph=self.graph, hosts=self.hosts,
                              switches=self.switches)

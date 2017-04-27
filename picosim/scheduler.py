@@ -28,7 +28,7 @@ class FCFSScheduler:
         logger.debug("Job {0} subimitted at {1}".format(
             job.name, self.simulator.time))
         # If queue is not empty or hosts are occupied
-        if self.queue or not self.selector.test(job, hosts):
+        if self.queue or not self.selector.test(job):
             logger.debug("Job {0} queued ({1} jobs queued)".format(
                 job.name, self.n_queued))
             job.status = JobStatus.QUEUED
@@ -57,7 +57,7 @@ class FCFSScheduler:
 
         job = self.queue.popleft()
         # If there are not enough available hosts
-        if not self.selector.test(job, hosts):
+        if not self.selector.test(job):
             # Put back job to queue
             self.queue.appendleft(job)
             return
@@ -72,7 +72,7 @@ class FCFSScheduler:
         job.status = JobStatus.RUNNING
 
         # Select and allocate hosts
-        selected_hosts = self.selector.select(job, hosts)
+        selected_hosts = self.selector.select(job)
         for host in selected_hosts:
             host.allocated = True
             host.job = job
