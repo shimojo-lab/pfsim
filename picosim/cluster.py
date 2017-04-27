@@ -28,7 +28,8 @@ class Cluster:
         assert issubclass(host_selector, HostSelector)
         assert issubclass(process_mapper, ProcessMapper)
 
-        self.scheduler = scheduler(simulator=simulator,
+        self.scheduler = scheduler(hosts=self.hosts,
+                                   simulator=simulator,
                                    selector=host_selector(hosts=self.hosts),
                                    mapper=process_mapper())
         self.router = router(graph=self.graph, hosts=self.hosts,
@@ -51,7 +52,7 @@ class Cluster:
             job.link_usage[u][v] += traffic
             job.link_flows[u][v] += 1
 
-    def _job_finished(self, job, hosts):
+    def _job_finished(self, job):
         for u, v_traffic in job.link_usage.items():
             for v, traffic in v_traffic.items():
                 self.graph[u][v]["traffic"] -= traffic
@@ -61,8 +62,7 @@ class Cluster:
                 self.graph[u][v]["flows"] -= flows
 
     def submit_job(self, job, time=0.0):
-        self.simulator.schedule("job.submitted", job=job, time=time,
-                                hosts=self.hosts)
+        self.simulator.schedule("job.submitted", time, job=job)
 
     def report(self):
         logger.info("{0:=^80}".format(" " + self.graph.name + "  "))

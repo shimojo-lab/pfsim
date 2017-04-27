@@ -20,4 +20,4 @@ class JobGenerator:
                              generator=self, simulator=self.simulator)
 
         self.simulator.schedule_after("job.submitted", self.submit_dist.get(),
-                                      job=job, hosts=self.hosts)
+                                      job=job)

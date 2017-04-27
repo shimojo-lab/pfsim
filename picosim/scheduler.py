@@ -8,7 +8,8 @@ logger = getLogger(__name__)
 
 
 class FCFSScheduler:
-    def __init__(self, simulator, selector, mapper):
+    def __init__(self, hosts, simulator, selector, mapper):
+        self.hosts = hosts
         self.simulator = simulator
         self.queue = deque()
         self.selector = selector
@@ -24,7 +25,7 @@ class FCFSScheduler:
     def n_queued(self):
         return len(self.queue)
 
-    def _job_submitted(self, job, hosts):
+    def _job_submitted(self, job):
         logger.debug("Job {0} subimitted at {1}".format(
             job.name, self.simulator.time))
         # If queue is not empty or hosts are occupied
@@ -35,9 +36,9 @@ class FCFSScheduler:
             self.queue.append(job)
             return
 
-        self._run_job(job, hosts)
+        self._run_job(job)
 
-    def _job_finished(self, job, hosts):
+    def _job_finished(self, job):
         logger.debug("Job {0} finished at {1}".format(
             job.name, self.simulator.time))
 
@@ -62,9 +63,9 @@ class FCFSScheduler:
             self.queue.appendleft(job)
             return
 
-        self._run_job(job, hosts)
+        self._run_job(job)
 
-    def _run_job(self, job, hosts):
+    def _run_job(self, job):
         logger.debug("Job {0} starting at {1}".format(
             job.name, self.simulator.time))
 
@@ -91,5 +92,4 @@ class FCFSScheduler:
             proc.job = job
 
         self.simulator.schedule("job.started", job=job)
-        self.simulator.schedule_after("job.finished", job.duration,
-                                      job=job, hosts=hosts)
+        self.simulator.schedule_after("job.finished", job.duration, job=job)

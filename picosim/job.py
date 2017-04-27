@@ -39,13 +39,13 @@ class Job:
             self.simulator.register("job.started", self._started)
             self.simulator.register("job.finished", self._finished)
 
-    def _submitted(self, job, hosts):
+    def _submitted(self, job):
         if self != job:
             return
 
         self.created_at = self.simulator.time
 
-    def _finished(self, job, hosts):
+    def _finished(self, job):
         if self != job:
             return
 

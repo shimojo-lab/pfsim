@@ -18,13 +18,12 @@ class TestFCFSScheduler:
         self.job6 = Job("j6", n_procs=64, duration=5.0)
 
         self.simulator = Simulator()
-        self.scheduler = FCFSScheduler(self.simulator,
+        self.scheduler = FCFSScheduler(self.hosts, self.simulator,
                                        LinearHostSelector(hosts=self.hosts),
                                        LinearProcessMapper())
 
     def test_single_job(self):
-        self.simulator.schedule("job.submitted", job=self.job1,
-                                hosts=self.hosts)
+        self.simulator.schedule("job.submitted", job=self.job1)
 
         assert self.job1.status == JobStatus.CREATED
 
@@ -54,10 +53,8 @@ class TestFCFSScheduler:
         assert all([h.job is None and not h.allocated for h in self.hosts])
 
     def test_multiple_job(self):
-        self.simulator.schedule("job.submitted", 1.0, job=self.job1,
-                                hosts=self.hosts)
-        self.simulator.schedule("job.submitted", 2.0, job=self.job2,
-                                hosts=self.hosts)
+        self.simulator.schedule("job.submitted", 1.0, job=self.job1)
+        self.simulator.schedule("job.submitted", 2.0, job=self.job2)
 
         self.simulator.run_until(0.5)
         assert self.job1.status == JobStatus.CREATED
@@ -73,8 +70,7 @@ class TestFCFSScheduler:
         for host in self.hosts:
             host.allocated = True
 
-        self.simulator.schedule("job.submitted", 1.0, job=self.job1,
-                                hosts=self.hosts)
+        self.simulator.schedule("job.submitted", 1.0, job=self.job1)
 
         assert self.job1.status == JobStatus.CREATED
 
@@ -83,12 +79,9 @@ class TestFCFSScheduler:
         assert self.job1.status == JobStatus.QUEUED
 
     def test_multiple_queueing(self):
-        self.simulator.schedule("job.submitted", 1.0, job=self.job1,
-                                hosts=self.hosts)
-        self.simulator.schedule("job.submitted", 2.0, job=self.job2,
-                                hosts=self.hosts)
-        self.simulator.schedule("job.submitted", 3.0, job=self.job3,
-                                hosts=self.hosts)
+        self.simulator.schedule("job.submitted", 1.0, job=self.job1)
+        self.simulator.schedule("job.submitted", 2.0, job=self.job2)
+        self.simulator.schedule("job.submitted", 3.0, job=self.job3)
 
         self.simulator.run_until(0.5)
         assert self.job1.status == JobStatus.CREATED
@@ -119,12 +112,9 @@ class TestFCFSScheduler:
         assert self.job3.status == JobStatus.FINISHED
 
     def test_job_order(self):
-        self.simulator.schedule("job.submitted", 1.0, job=self.job4,
-                                hosts=self.hosts)
-        self.simulator.schedule("job.submitted", 2.0, job=self.job5,
-                                hosts=self.hosts)
-        self.simulator.schedule("job.submitted", 3.0, job=self.job6,
-                                hosts=self.hosts)
+        self.simulator.schedule("job.submitted", 1.0, job=self.job4)
+        self.simulator.schedule("job.submitted", 2.0, job=self.job5)
+        self.simulator.schedule("job.submitted", 3.0, job=self.job6)
 
         self.simulator.run_until(1.5)
         assert self.job4.status == JobStatus.RUNNING
