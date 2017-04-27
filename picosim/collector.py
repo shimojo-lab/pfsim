@@ -1,8 +1,7 @@
 from logging import getLogger
+from math import inf
 
 from .statistics import Samples, TimeSeriesSamples
-
-from math import inf
 
 logger = getLogger(__name__)
 
