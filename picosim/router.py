@@ -77,3 +77,17 @@ class DmodKRouter(Router):
         self.memo[(src, dst)] = path
 
         return path
+
+
+class GreedyRouter(Router):
+    def __init__(self, graph, hosts=None, switches=None):
+        super().__init__(graph, hosts=hosts, switches=switches)
+
+    def route(self, src_proc, dst_proc):
+        src = src_proc.host
+        dst = dst_proc.host
+
+        path = nx.dijkstra_path(self.graph, source=src.name, target=dst.name,
+                                weight="traffic")
+
+        return path

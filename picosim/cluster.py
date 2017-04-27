@@ -39,13 +39,13 @@ class Cluster:
         self.simulator.register("job.finished", self._job_finished)
 
         for u, v, attrs in self.graph.edges_iter(data=True):
-            attrs["traffic"] = 0
+            attrs["traffic"] = 0.0
             attrs["flows"] = 0
 
     def _job_message(self, job, src_proc, dst_proc, traffic):
         path = self.router.route(src_proc, dst_proc)
 
-        for u, v in zip(path[1:], path[:-1]):
+        for u, v in zip(path[:-1], path[1:]):
             edge = self.graph[u][v]
             edge["traffic"] += traffic
             edge["flows"] += 1
