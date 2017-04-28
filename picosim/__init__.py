@@ -19,5 +19,7 @@ def main():
     args = docopt(__doc__, version="picosim 0.1.0")
     configure_logging(verbose=args["--verbose"])
 
-    experiment = Experiment.from_yaml(args["<path/to/scenario>"])
-    experiment.run()
+    experiment = Experiment(args["<path/to/scenario>"])
+
+    for scenario in experiment.scenarios:
+        scenario.run()

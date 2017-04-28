@@ -55,6 +55,7 @@ class Samples:
         ax = fig.add_subplot(1, 1, 1)
         ax.hist(self.values, bins="auto")
         fig.savefig(path)
+        plt.close(fig)
 
 
 class TimeSeriesSamples(Samples):
@@ -114,3 +115,4 @@ class TimeSeriesSamples(Samples):
         ax = fig.add_subplot(1, 1, 1)
         ax.plot(self.times, self.values)
         fig.savefig(path)
+        plt.close(fig)
