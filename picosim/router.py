@@ -1,10 +1,39 @@
 import random
 from abc import ABC, abstractmethod
+from collections import defaultdict
 from logging import getLogger
 
 import networkx as nx
 
 logger = getLogger(__name__)
+
+
+class PathCache:
+    def __init__(self):
+        self._cache = {}
+        self._jobs = defaultdict(set)
+
+    def add(self, src, dst, path, job=None):
+        self._cache[(src, dst)] = path
+
+        if job is not None:
+            self._jobs[job].add((src, dst))
+
+    def has(self, src, dst):
+        return (src, dst) in self._cache
+
+    def get(self, src, dst):
+        return self._cache.get((src, dst), None)
+
+    def remove_job(self, job):
+        if job not in self._jobs:
+            return
+
+        for src, dst in self._jobs[job]:
+            if (src, dst) not in self._cache:
+                continue
+
+            del self._cache[(src, dst)]
 
 
 class Router(ABC):
@@ -19,26 +48,27 @@ class Router(ABC):
 
         self.addrs = {host.name: i for i, host in enumerate(self.hosts)}
 
+        self.cache = PathCache()
+
     @abstractmethod
-    def route(self, src_proc, dst_proc):
+    def route(self, src_proc, dst_proc, job=None):
         pass
 
 
 class RandomRouter(Router):
     def __init__(self, graph, hosts=None, switches=None):
         super().__init__(graph, hosts=hosts, switches=switches)
-        self.memo = {}
 
-    def route(self, src_proc, dst_proc):
+    def route(self, src_proc, dst_proc, job=None):
         src = src_proc.host
         dst = dst_proc.host
 
-        if (src, dst) in self.memo:
-            return self.memo[(src, dst)]
+        if self.cache.has(src, dst):
+            return self.cache.get(src, dst)
 
         paths = list(nx.all_shortest_paths(self.graph, src.name, dst.name))
         path = random.choice(paths)
-        self.memo[(src, dst)] = path
+        self.cache.add(src, dst, path)
 
         return path
 
@@ -46,14 +76,13 @@ class RandomRouter(Router):
 class DmodKRouter(Router):
     def __init__(self, graph, hosts=None, switches=None):
         super().__init__(graph, hosts=hosts, switches=switches)
-        self.memo = {}
 
-    def route(self, src_proc, dst_proc):
+    def route(self, src_proc, dst_proc, job=None):
         src = src_proc.host
         dst = dst_proc.host
 
-        if (src, dst) in self.memo:
-            return self.memo[(src, dst)]
+        if self.cache.has(src, dst):
+            return self.cache.get(src, dst)
 
         paths = list(nx.all_shortest_paths(self.graph, src.name, dst.name))
         indices = list(range(len(paths)))
@@ -74,7 +103,7 @@ class DmodKRouter(Router):
             indices = [j for j in indices if paths[j][i] == switch]
 
         path = paths[indices.pop()]
-        self.memo[(src, dst)] = path
+        self.cache.add(src, dst, path)
 
         return path
 
@@ -82,17 +111,16 @@ class DmodKRouter(Router):
 class GreedyRouter(Router):
     def __init__(self, graph, hosts=None, switches=None):
         super().__init__(graph, hosts=hosts, switches=switches)
-        self.memo = {}
 
-    def route(self, src_proc, dst_proc):
+    def route(self, src_proc, dst_proc, job=None):
         src = src_proc.host
         dst = dst_proc.host
 
-        if (src, dst) in self.memo:
-            return self.memo[(src, dst)]
+        if self.cache.has(src, dst):
+            return self.cache.get(src, dst)
 
         path = nx.dijkstra_path(self.graph, source=src.name, target=dst.name,
                                 weight="traffic")
-        self.memo[(src, dst)] = path
+        self.cache.add(src, dst, path, job)
 
         return path

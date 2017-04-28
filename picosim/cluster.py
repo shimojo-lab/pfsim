@@ -43,7 +43,7 @@ class Cluster:
             attrs["flows"] = 0
 
     def _job_message(self, job, src_proc, dst_proc, traffic):
-        path = self.router.route(src_proc, dst_proc)
+        path = self.router.route(src_proc, dst_proc, job)
 
         for u, v in zip(path[:-1], path[1:]):
             edge = self.graph[u][v]
@@ -53,6 +53,8 @@ class Cluster:
             job.link_flows[u][v] += 1
 
     def _job_finished(self, job):
+        self.router.cache.remove_job(job)
+
         for u, v_traffic in job.link_usage.items():
             for v, traffic in v_traffic.items():
                 self.graph[u][v]["traffic"] -= traffic
