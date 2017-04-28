@@ -11,13 +11,13 @@ logger = getLogger(__name__)
 class PathCache:
     def __init__(self):
         self._cache = {}
-        self._jobs = defaultdict(set)
+        self._jobs = defaultdict(list)
 
     def add(self, src, dst, path, job=None):
         self._cache[(src, dst)] = path
 
         if job is not None:
-            self._jobs[job].add((src, dst))
+            self._jobs[job].append((src, dst))
 
     def has(self, src, dst):
         return (src, dst) in self._cache
