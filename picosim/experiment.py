@@ -1,5 +1,5 @@
 from importlib import import_module
-from logging import getLogger
+from logging import FileHandler, getLogger
 from os import makedirs
 from pathlib import Path
 
@@ -46,6 +46,10 @@ class Experiment:
         }]
     })
 
+    CONF_SCHEMA = Schema({
+        "scenario": [SCENARIO_SCHEMA]
+    })
+
     def __init__(self, cluster, simulator, output_path, collectors=[]):
         self.cluster = cluster
         self.simulator = simulator
@@ -54,8 +58,12 @@ class Experiment:
         self.job_generators = []
         self.output_path = output_path
 
-    def run(self):
         makedirs(self.output_path, exist_ok=True)
+        log_path = Path(self.output_path) / "result.log"
+        self.file_handler = FileHandler(str(log_path))
+
+    def run(self):
+        getLogger().addHandler(self.file_handler)
 
         # Print simulator configurations
         self.report()
@@ -68,8 +76,9 @@ class Experiment:
             collector.report()
             collector.plot(self.output_path)
 
+        getLogger().removeHandler(self.file_handler)
+
     def report(self):
-        logger.info("Starting experiment with following configuration:")
         logger.info("=" * 80)
         logger.info("Duration:                  {0}".format(
             self.conf["duration"]))
@@ -100,8 +109,8 @@ class Experiment:
             simulator=simulator
         )
 
-        output_path = str(Path(path).parent / conf["output"])
-        experiment = Experiment(cluster, simulator, output_path)
+        output_path = Path(path).parent / conf["output"]
+        experiment = Experiment(cluster, simulator, str(output_path))
 
         for job_conf in conf["jobs"]:
             job_submit_conf = job_conf["submit"]
