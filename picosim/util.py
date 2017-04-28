@@ -19,15 +19,11 @@ def configure_logging(verbose=False):
                 "class": "logging.StreamHandler",
                 "formatter": "color",
                 "stream": "ext://sys.stdout",
-            },
-            "file": {
-                "class": "logging.FileHandler",
-                "filename": "hoge.log",
             }
         },
         "root": {
             "level": loglevel,
-            "handlers": ["default", "file"],
+            "handlers": ["default"],
         },
         "disable_existing_loggers": False
     })
