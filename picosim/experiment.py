@@ -1,5 +1,6 @@
 from importlib import import_module
 from logging import getLogger
+from os import makedirs
 from pathlib import Path
 
 import networkx as nx
@@ -21,6 +22,7 @@ class Experiment:
         "duration": Or(int, float),
         "topology": And(str, lambda p: Path(p).exists(),
                         error="Topology file must exist"),
+        "output": str,
         "algorithms": {
             "scheduler": str,
             "host_selector": str,
@@ -44,21 +46,27 @@ class Experiment:
         }]
     })
 
-    def __init__(self, cluster, simulator, collectors=[]):
+    def __init__(self, cluster, simulator, output_path, collectors=[]):
         self.cluster = cluster
         self.simulator = simulator
         self.collectors = collectors
         self.conf = None
         self.job_generators = []
+        self.output_path = output_path
 
     def run(self):
+        makedirs(self.output_path, exist_ok=True)
+
+        # Print simulator configurations
         self.report()
+        # Print cluster configuration
         self.cluster.report()
 
         self.simulator.run_until(self.conf["duration"])
 
         for collector in self.collectors:
             collector.report()
+            collector.plot(self.output_path)
 
     def report(self):
         logger.info("Starting experiment with following configuration:")
@@ -92,7 +100,8 @@ class Experiment:
             simulator=simulator
         )
 
-        experiment = Experiment(cluster, simulator)
+        output_path = str(Path(path).parent / conf["output"])
+        experiment = Experiment(cluster, simulator, output_path)
 
         for job_conf in conf["jobs"]:
             job_submit_conf = job_conf["submit"]

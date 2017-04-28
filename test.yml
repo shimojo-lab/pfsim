@@ -1,13 +1,15 @@
 ---
-duration: 10000.0
+duration: 1000.0
 
 topology: topologies/milk.graphml
+
+output: output/milk-cg-greedy
 
 algorithms:
   scheduler: picosim.scheduler.FCFSScheduler
   host_selector: picosim.host_selector.LinearHostSelector
   process_mapper: picosim.process_mapper.LinearProcessMapper
-  router: picosim.router.DmodKRouter
+  router: picosim.router.GreedyRouter
 
 jobs:
   - submit:

@@ -50,13 +50,11 @@ class Samples:
         logger.info("Count:     {0}".format(self.count))
         logger.info("Variance:  {0}".format(self.variance))
 
-        self.plot()
-
-    def plot(self):
+    def plot(self, path):
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         ax.hist(self.values, bins="auto")
-        fig.savefig(self.name + ".png")
+        fig.savefig(path)
 
 
 class TimeSeriesSamples(Samples):
@@ -111,10 +109,8 @@ class TimeSeriesSamples(Samples):
         logger.info("Count:     {0}".format(self.count))
         logger.info("Variance:  {0}".format(self.variance))
 
-        self.plot()
-
-    def plot(self):
+    def plot(self, path):
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         ax.plot(self.times, self.values)
-        fig.savefig(self.name + ".png")
+        fig.savefig(path)

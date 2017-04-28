@@ -1,5 +1,6 @@
 from logging import getLogger
 from math import inf
+from pathlib import Path
 
 from .statistics import Samples, TimeSeriesSamples
 
@@ -17,6 +18,15 @@ class SchedulerMetricsCollector:
         self.n_finished = TimeSeriesSamples("Number of Finished Jobs")
         self.wait_time = Samples("Job Wait Time")
         self.response_time = Samples("Job Response Time")
+
+        self.metrics = [
+            self.n_queued,
+            self.n_system,
+            self.n_running,
+            self.n_finished,
+            self.wait_time,
+            self.response_time
+        ]
 
         simulator.register("job.submitted", self._collect, prio=-inf)
         simulator.register("job.started", self._collect, prio=-inf)
@@ -37,12 +47,13 @@ class SchedulerMetricsCollector:
         self.n_finished.add(time, self.cluster.scheduler.n_finished)
 
     def report(self):
-        self.n_queued.report()
-        self.n_system.report()
-        self.n_running.report()
-        self.n_finished.report()
-        self.wait_time.report()
-        self.response_time.report()
+        for metric in self.metrics:
+            metric.report()
+
+    def plot(self, output_dir):
+        for metric in self.metrics:
+            path = Path(output_dir) / Path(metric.name).with_suffix(".png")
+            metric.plot(str(path))
 
 
 class InterconnectMetricsCollector:
@@ -52,6 +63,11 @@ class InterconnectMetricsCollector:
 
         self.max_congestion = TimeSeriesSamples("Maximum Congestion")
         self.max_flows = TimeSeriesSamples("Maximum Number of Flows")
+
+        self.metrics = [
+            self.max_congestion,
+            self.max_flows
+        ]
 
         simulator.register("job.message", self._collect, prio=-inf)
 
@@ -70,5 +86,10 @@ class InterconnectMetricsCollector:
         self.max_flows.add(time, max_flows)
 
     def report(self):
-        self.max_congestion.report()
-        self.max_flows.report()
+        for metric in self.metrics:
+            metric.report()
+
+    def plot(self, output_dir):
+        for metric in self.metrics:
+            path = Path(output_dir) / Path(metric.name).with_suffix(".png")
+            metric.plot(str(path))
