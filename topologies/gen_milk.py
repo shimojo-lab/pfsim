@@ -1,12 +1,36 @@
 import networkx as nx
 
+MAC_ADDRESSES = [
+    "00:30:48:cf:f0:39",
+    "00:30:48:cf:f0:37",
+    "00:30:48:cd:a5:61",
+    "00:30:48:cf:f2:37",
+    "00:30:48:cf:f0:c7",
+    "00:30:48:f2:61:f5",
+    "00:30:48:cf:c1:15",
+    "00:30:48:cf:f0:35",
+    "00:30:48:cf:f0:a7",
+    "00:30:48:f2:62:35",
+    "00:30:48:cf:f0:a1",
+    "00:30:48:cf:f2:35",
+    "00:30:48:cf:f0:97",
+    "00:30:48:cf:f0:33",
+    "00:30:48:cf:f0:9f",
+    "00:30:48:cf:f0:d1",
+    "00:30:48:cf:f0:ab",
+    "00:30:48:f1:65:77",
+    "00:30:48:cf:f0:1b",
+    "00:30:48:cf:f2:33"
+]
+
 
 def main():
     g = nx.DiGraph(name="Milk cluster")
 
     # Add hosts
     for i in range(20):
-        g.add_node("milk{0:02d}".format(i+1), typ="host", capacity=8)
+        g.add_node("milk{0:02d}".format(i+1),
+                   typ="host", capacity=8, mac_address=MAC_ADDRESSES[i])
 
     for i in range(4):
         # Add edge switches
