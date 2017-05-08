@@ -1,6 +1,7 @@
 import random
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from heapq import heappop, heappush
 from logging import getLogger
 
 import networkx as nx
@@ -121,6 +122,43 @@ class GreedyRouter(Router):
 
         path = nx.dijkstra_path(self.graph, source=src.name, target=dst.name,
                                 weight="traffic")
+        self.cache.add(src, dst, path, job)
+
+        return path
+
+
+class GreedyRouter2(Router):
+    def __init__(self, graph, hosts=None, switches=None):
+        super().__init__(graph, hosts=hosts, switches=switches)
+
+    def _widest_path(self, src, dst):
+        q = []
+        visited = set()
+
+        heappush(q, (0, src, []))
+        while q:
+            cost, v, path = heappop(q)
+            if v in visited:
+                continue
+            visited.add(v)
+
+            if v == dst:
+                return path + [dst]
+
+            for u in self.graph.neighbors_iter(v):
+                if u not in visited:
+                    cost2 = self.graph[v][u]["traffic"]
+                    heappush(q, (max(cost, cost2), u, path + [v]))
+
+    def route(self, src_proc, dst_proc, job=None):
+        src = src_proc.host
+        dst = dst_proc.host
+
+        if self.cache.has(src, dst):
+            return self.cache.get(src, dst)
+
+        path = self._widest_path(src.name, dst.name)
+
         self.cache.add(src, dst, path, job)
 
         return path
