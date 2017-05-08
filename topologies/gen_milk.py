@@ -1,27 +1,28 @@
 import networkx as nx
 
-MAC_ADDRESSES = [
-    "00:30:48:cf:f0:39",
-    "00:30:48:cf:f0:37",
-    "00:30:48:cd:a5:61",
-    "00:30:48:cf:f2:37",
-    "00:30:48:cf:f0:c7",
-    "00:30:48:f2:61:f5",
-    "00:30:48:cf:c1:15",
-    "00:30:48:cf:f0:35",
-    "00:30:48:cf:f0:a7",
-    "00:30:48:f2:62:35",
-    "00:30:48:cf:f0:a1",
-    "00:30:48:cf:f2:35",
-    "00:30:48:cf:f0:97",
-    "00:30:48:cf:f0:33",
-    "00:30:48:cf:f0:9f",
-    "00:30:48:cf:f0:d1",
-    "00:30:48:cf:f0:ab",
-    "00:30:48:f1:65:77",
-    "00:30:48:cf:f0:1b",
-    "00:30:48:cf:f2:33"
-]
+MAC_ADDRESSES = {
+        "milk01": "00:30:48:cf:f0:39",
+        "milk02": "00:30:48:cf:f0:37",
+        "milk03": "00:30:48:cd:a5:61",
+        "milk04": "00:30:48:cf:f2:37",
+        "milk05": "00:30:48:cf:f0:c7",
+        "milk06": "00:30:48:f2:61:f5",
+        "milk07": "00:30:48:cf:c1:15",
+        "milk08": "00:30:48:cf:f0:35",
+        "milk09": "00:30:48:cf:f0:a7",
+        "milk10": "00:30:48:f2:62:35",
+        "milk11": "00:30:48:cf:f0:a1",
+        "milk12": "00:30:48:cf:f2:35",
+        "milk13": "00:30:48:cf:f0:97",
+        "milk14": "00:30:48:cf:f0:33",
+        "milk15": "00:30:48:cf:f0:9f",
+        "milk16": "00:30:48:cf:f0:d1",
+        "milk17": "00:30:48:cf:f0:ab",
+        "milk18": "00:30:48:f1:65:77",
+        "milk19": "00:30:48:cf:f0:1b",
+        "milk20": "00:30:48:cf:f2:33"
+}
+
 
 
 def main():
@@ -29,8 +30,9 @@ def main():
 
     # Add hosts
     for i in range(20):
-        g.add_node("milk{0:02d}".format(i+1),
-                   typ="host", capacity=8, mac_address=MAC_ADDRESSES[i])
+        host_name = "milk{0:02d}".format(i+1)
+        g.add_node(host_name, typ="host", capacity=8,
+                   mac=MAC_ADDRESSES[host_name])
 
     for i in range(4):
         # Add edge switches
