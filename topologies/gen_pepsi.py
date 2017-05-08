@@ -26,7 +26,7 @@ def main():
         # Add links between core switches and edge switches
         for j in range(4):
             src = "core{0}".format(i+1)
-            dst = "edge{0}".format(j+1),
+            dst = "edge{0}".format(j+1)
             g.add_edge(src, dst, capacity=4)
             g.add_edge(dst, src, capacity=4)
 
