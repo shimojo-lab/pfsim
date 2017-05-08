@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="port" attr.type="long" for="edge" id="d5" />
   <key attr.name="capacity" attr.type="long" for="edge" id="d4" />
   <key attr.name="mac" attr.type="string" for="node" id="d3" />
   <key attr.name="capacity" attr.type="long" for="node" id="d2" />
@@ -187,18 +188,23 @@
     </edge>
     <edge source="edge1" target="milk01">
       <data key="d4">1</data>
+      <data key="d5">10</data>
     </edge>
     <edge source="edge1" target="milk02">
       <data key="d4">1</data>
+      <data key="d5">12</data>
     </edge>
     <edge source="edge1" target="milk03">
       <data key="d4">1</data>
+      <data key="d5">14</data>
     </edge>
     <edge source="edge1" target="milk04">
       <data key="d4">1</data>
+      <data key="d5">16</data>
     </edge>
     <edge source="edge1" target="milk05">
       <data key="d4">1</data>
+      <data key="d5">15</data>
     </edge>
     <edge source="edge1" target="core1">
       <data key="d4">1</data>
@@ -208,18 +214,23 @@
     </edge>
     <edge source="edge2" target="milk06">
       <data key="d4">1</data>
+      <data key="d5">18</data>
     </edge>
     <edge source="edge2" target="milk07">
       <data key="d4">1</data>
+      <data key="d5">21</data>
     </edge>
     <edge source="edge2" target="milk08">
       <data key="d4">1</data>
+      <data key="d5">20</data>
     </edge>
     <edge source="edge2" target="milk09">
       <data key="d4">1</data>
+      <data key="d5">22</data>
     </edge>
     <edge source="edge2" target="milk10">
       <data key="d4">1</data>
+      <data key="d5">24</data>
     </edge>
     <edge source="edge2" target="core1">
       <data key="d4">1</data>
@@ -229,18 +240,23 @@
     </edge>
     <edge source="edge3" target="milk11">
       <data key="d4">1</data>
+      <data key="d5">26</data>
     </edge>
     <edge source="edge3" target="milk12">
       <data key="d4">1</data>
+      <data key="d5">28</data>
     </edge>
     <edge source="edge3" target="milk13">
       <data key="d4">1</data>
+      <data key="d5">29</data>
     </edge>
     <edge source="edge3" target="milk14">
       <data key="d4">1</data>
+      <data key="d5">30</data>
     </edge>
     <edge source="edge3" target="milk15">
       <data key="d4">1</data>
+      <data key="d5">32</data>
     </edge>
     <edge source="edge3" target="core1">
       <data key="d4">1</data>
@@ -250,18 +266,23 @@
     </edge>
     <edge source="edge4" target="milk16">
       <data key="d4">1</data>
+      <data key="d5">37</data>
     </edge>
     <edge source="edge4" target="milk17">
       <data key="d4">1</data>
+      <data key="d5">34</data>
     </edge>
     <edge source="edge4" target="milk18">
       <data key="d4">1</data>
+      <data key="d5">36</data>
     </edge>
     <edge source="edge4" target="milk19">
       <data key="d4">1</data>
+      <data key="d5">38</data>
     </edge>
     <edge source="edge4" target="milk20">
       <data key="d4">1</data>
+      <data key="d5">40</data>
     </edge>
     <edge source="edge4" target="core1">
       <data key="d4">1</data>
@@ -271,27 +292,35 @@
     </edge>
     <edge source="core1" target="edge1">
       <data key="d4">1</data>
+      <data key="d5">1</data>
     </edge>
     <edge source="core1" target="edge2">
       <data key="d4">1</data>
+      <data key="d5">3</data>
     </edge>
     <edge source="core1" target="edge3">
       <data key="d4">1</data>
+      <data key="d5">5</data>
     </edge>
     <edge source="core1" target="edge4">
       <data key="d4">1</data>
+      <data key="d5">7</data>
     </edge>
     <edge source="core2" target="edge1">
       <data key="d4">1</data>
+      <data key="d5">41</data>
     </edge>
     <edge source="core2" target="edge2">
       <data key="d4">1</data>
+      <data key="d5">43</data>
     </edge>
     <edge source="core2" target="edge3">
       <data key="d4">1</data>
+      <data key="d5">45</data>
     </edge>
     <edge source="core2" target="edge4">
       <data key="d4">1</data>
+      <data key="d5">47</data>
     </edge>
   </graph>
 </graphml>

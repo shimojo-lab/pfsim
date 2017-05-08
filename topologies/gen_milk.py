@@ -23,6 +23,56 @@ MAC_ADDRESSES = {
         "milk20": "00:30:48:cf:f2:33"
 }
 
+PORT_NUMS = {
+    "core1": {
+        "edge1": 1,
+        "edge2": 3,
+        "edge3": 5,
+        "edge4": 7
+    },
+    "core2": {
+        "edge1": 41,
+        "edge2": 43,
+        "edge3": 45,
+        "edge4": 47
+    },
+    "edge1": {
+        "core1": 9,
+        "core2": 11,
+        "milk01": 10,
+        "milk02": 12,
+        "milk03": 14,
+        "milk04": 16,
+        "milk05": 15,
+    },
+    "edge2": {
+        "core1": 17,
+        "core2": 19,
+        "milk06": 18,
+        "milk07": 21,
+        "milk08": 20,
+        "milk09": 22,
+        "milk10": 24
+    },
+    "edge3": {
+        "core1": 25,
+        "core2": 27,
+        "milk11": 26,
+        "milk12": 28,
+        "milk13": 29,
+        "milk14": 30,
+        "milk15": 32
+    },
+    "edge4": {
+        "core1": 33,
+        "core2": 35,
+        "milk16": 37,
+        "milk17": 34,
+        "milk18": 36,
+        "milk19": 38,
+        "milk20": 40
+    },
+}
 
 
 def main():
@@ -42,7 +92,7 @@ def main():
         for j in range(5):
             src = "edge{0}".format(i+1)
             dst = "milk{0:02}".format(i*5+j+1)
-            g.add_edge(src, dst, capacity=1)
+            g.add_edge(src, dst, capacity=1, port=PORT_NUMS[src][dst])
             g.add_edge(dst, src, capacity=1)
 
     for i in range(2):
@@ -53,7 +103,7 @@ def main():
         for j in range(4):
             src = "core{0}".format(i+1)
             dst = "edge{0}".format(j+1)
-            g.add_edge(src, dst, capacity=1)
+            g.add_edge(src, dst, capacity=1, port=PORT_NUMS[src][dst])
             g.add_edge(dst, src, capacity=1)
 
     nx.write_graphml(g, "milk.graphml")
