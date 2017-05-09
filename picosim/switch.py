@@ -27,11 +27,13 @@ class FDB:
 
 
 class Switch:
-    def __init__(self, name, **kwargs):
+    def __init__(self, name, dpid=None, **kwargs):
         # Switch name
         self.name = name
         # Forwarding DataBase
         self.fdb = FDB()
+        # Datapath ID
+        self.dpid = dpid
 
     def __repr__(self):
         return "<Switch {0}>".format(self.name)
