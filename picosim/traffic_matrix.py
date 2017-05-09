@@ -42,11 +42,11 @@ class TrafficMatrix:
                     src = trace["rank"]
                     n_procs += 1
 
-                    for dst, tx_bytes in enumerate(trace["tx_bytes"]):
-                        if tx_bytes <= 0.0:
+                    for dst, tx_messages in enumerate(trace["tx_messages"]):
+                        if tx_messages <= 0:
                             continue
 
-                        coo.append((src, dst, tx_bytes))
+                        coo.append((src, dst, trace["tx_bytes"][dst]))
 
         # Inplace sort (src, dst, volume) tripltes by volume
         coo.sort(key=lambda triple: triple[2], reverse=True)
