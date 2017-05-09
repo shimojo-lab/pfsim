@@ -1,7 +1,6 @@
 import networkx as nx
 
 from .host import Host
-from .process import Process
 from .router import DmodKRouter, GreedyRouter2, RandomRouter
 
 
@@ -20,27 +19,15 @@ class TestRandomRouter:
         self.h1 = Host("h1", capacity=8)
         self.h2 = Host("h2", capacity=8)
 
-        self.p0 = Process(None, 0)
-        self.p1 = Process(None, 1)
-        self.p2 = Process(None, 2)
-        self.p3 = Process(None, 3)
-
-        self.h1.procs = [self.p0, self.p1]
-        self.h2.procs = [self.p2, self.p3]
-        self.p0.host = self.h1
-        self.p1.host = self.h1
-        self.p2.host = self.h2
-        self.p3.host = self.h2
-
         self.router = RandomRouter(self.graph)
 
     def test_intra_node(self):
-        path = self.router.route(self.p0, self.p1)
+        path = self.router.route(self.h1, self.h1)
 
         assert path == ["h1"]
 
     def test_inter_node(self):
-        path = self.router.route(self.p0, self.p2)
+        path = self.router.route(self.h1, self.h2)
 
         assert path == ["h1", "s1", "h2"] or path == ["h1", "s2", "h2"]
 
@@ -64,42 +51,26 @@ class TestDmodKRouter:
         self.h3 = Host("h3", capacity=8)
         self.h4 = Host("h4", capacity=8)
 
-        self.p0 = Process(None, 0)
-        self.p1 = Process(None, 1)
-        self.p2 = Process(None, 2)
-        self.p3 = Process(None, 3)
-        self.p4 = Process(None, 3)
-
-        self.h1.procs = [self.p0]
-        self.h2.procs = [self.p1]
-        self.h3.procs = [self.p2]
-        self.h4.procs = [self.p3, self.p4]
-        self.p0.host = self.h1
-        self.p1.host = self.h2
-        self.p2.host = self.h3
-        self.p3.host = self.h4
-        self.p4.host = self.h4
-
         self.hosts = [self.h1, self.h2, self.h3, self.h4]
 
         self.router = DmodKRouter(self.graph, hosts=self.hosts)
 
     def test_intra_node(self):
-        path = self.router.route(self.p3, self.p4)
+        path = self.router.route(self.h4, self.h4)
 
         assert path == ["h4"]
 
     def test_inter_node(self):
-        path = self.router.route(self.p0, self.p3)
+        path = self.router.route(self.h1, self.h4)
         assert path == ["h1", "s3", "s2", "s4", "h4"]
 
-        path = self.router.route(self.p1, self.p3)
+        path = self.router.route(self.h2, self.h4)
         assert path == ["h2", "s3", "s2", "s4", "h4"]
 
-        path = self.router.route(self.p0, self.p2)
+        path = self.router.route(self.h1, self.h3)
         assert path == ["h1", "s3", "s1", "s4", "h3"]
 
-        path = self.router.route(self.p1, self.p2)
+        path = self.router.route(self.h2, self.h3)
         assert path == ["h2", "s3", "s1", "s4", "h3"]
 
 
@@ -126,18 +97,10 @@ class TestGreedyRouter2:
         self.h1 = Host("h1", capacity=8)
         self.h2 = Host("h2", capacity=8)
 
-        self.p0 = Process(None, 0)
-        self.p1 = Process(None, 1)
-
-        self.h1.procs = [self.p0]
-        self.h2.procs = [self.p1]
-        self.p0.host = self.h1
-        self.p1.host = self.h2
-
         self.hosts = [self.h1, self.h2]
 
         self.router = GreedyRouter2(self.graph, hosts=self.hosts)
 
     def test_inter_node(self):
-        path = self.router.route(self.p0, self.p1)
+        path = self.router.route(self.h1, self.h2)
         assert path == ["h1", "s1", "s3", "s4", "h2"]

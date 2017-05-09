@@ -52,7 +52,7 @@ class Router(ABC):
         self.cache = PathCache()
 
     @abstractmethod
-    def route(self, src_proc, dst_proc, job=None):
+    def route(self, src, dst, job=None):
         pass
 
 
@@ -60,10 +60,7 @@ class RandomRouter(Router):
     def __init__(self, graph, hosts=None, switches=None):
         super().__init__(graph, hosts=hosts, switches=switches)
 
-    def route(self, src_proc, dst_proc, job=None):
-        src = src_proc.host
-        dst = dst_proc.host
-
+    def route(self, src, dst, job=None):
         if self.cache.has(src, dst):
             return self.cache.get(src, dst)
 
@@ -78,10 +75,7 @@ class DmodKRouter(Router):
     def __init__(self, graph, hosts=None, switches=None):
         super().__init__(graph, hosts=hosts, switches=switches)
 
-    def route(self, src_proc, dst_proc, job=None):
-        src = src_proc.host
-        dst = dst_proc.host
-
+    def route(self, src, dst, job=None):
         if self.cache.has(src, dst):
             return self.cache.get(src, dst)
 
@@ -113,10 +107,7 @@ class GreedyRouter(Router):
     def __init__(self, graph, hosts=None, switches=None):
         super().__init__(graph, hosts=hosts, switches=switches)
 
-    def route(self, src_proc, dst_proc, job=None):
-        src = src_proc.host
-        dst = dst_proc.host
-
+    def route(self, src, dst, job=None):
         if self.cache.has(src, dst):
             return self.cache.get(src, dst)
 
@@ -150,10 +141,7 @@ class GreedyRouter2(Router):
                     cost2 = self.graph[v][u]["traffic"]
                     heappush(q, (max(cost, cost2), u, path + [v]))
 
-    def route(self, src_proc, dst_proc, job=None):
-        src = src_proc.host
-        dst = dst_proc.host
-
+    def route(self, src, dst, job=None):
         if self.cache.has(src, dst):
             return self.cache.get(src, dst)
 
