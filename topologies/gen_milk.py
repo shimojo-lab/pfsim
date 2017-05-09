@@ -1,26 +1,35 @@
 import networkx as nx
 
 MAC_ADDRESSES = {
-        "milk01": "00:30:48:cf:f0:39",
-        "milk02": "00:30:48:cf:f0:37",
-        "milk03": "00:30:48:cd:a5:61",
-        "milk04": "00:30:48:cf:f2:37",
-        "milk05": "00:30:48:cf:f0:c7",
-        "milk06": "00:30:48:f2:61:f5",
-        "milk07": "00:30:48:cf:c1:15",
-        "milk08": "00:30:48:cf:f0:35",
-        "milk09": "00:30:48:cf:f0:a7",
-        "milk10": "00:30:48:f2:62:35",
-        "milk11": "00:30:48:cf:f0:a1",
-        "milk12": "00:30:48:cf:f2:35",
-        "milk13": "00:30:48:cf:f0:97",
-        "milk14": "00:30:48:cf:f0:33",
-        "milk15": "00:30:48:cf:f0:9f",
-        "milk16": "00:30:48:cf:f0:d1",
-        "milk17": "00:30:48:cf:f0:ab",
-        "milk18": "00:30:48:f1:65:77",
-        "milk19": "00:30:48:cf:f0:1b",
-        "milk20": "00:30:48:cf:f2:33"
+    "milk01": "00:30:48:cf:f0:39",
+    "milk02": "00:30:48:cf:f0:37",
+    "milk03": "00:30:48:cd:a5:61",
+    "milk04": "00:30:48:cf:f2:37",
+    "milk05": "00:30:48:cf:f0:c7",
+    "milk06": "00:30:48:f2:61:f5",
+    "milk07": "00:30:48:cf:c1:15",
+    "milk08": "00:30:48:cf:f0:35",
+    "milk09": "00:30:48:cf:f0:a7",
+    "milk10": "00:30:48:f2:62:35",
+    "milk11": "00:30:48:cf:f0:a1",
+    "milk12": "00:30:48:cf:f2:35",
+    "milk13": "00:30:48:cf:f0:97",
+    "milk14": "00:30:48:cf:f0:33",
+    "milk15": "00:30:48:cf:f0:9f",
+    "milk16": "00:30:48:cf:f0:d1",
+    "milk17": "00:30:48:cf:f0:ab",
+    "milk18": "00:30:48:f1:65:77",
+    "milk19": "00:30:48:cf:f0:1b",
+    "milk20": "00:30:48:cf:f2:33"
+}
+
+DPIDS = {
+        "core1": 1,
+        "core2": 2,
+        "edge1": 3,
+        "edge2": 4,
+        "edge3": 5,
+        "edge4": 6,
 }
 
 PORT_NUMS = {
@@ -86,7 +95,8 @@ def main():
 
     for i in range(4):
         # Add edge switches
-        g.add_node("edge{0}".format(i+1), typ="switch")
+        sw_name = "edge{0}".format(i+1)
+        g.add_node(sw_name, typ="switch", dpid=DPIDS[sw_name])
 
         # Add links between edge swtiches and hosts
         for j in range(5):
@@ -97,14 +107,15 @@ def main():
 
     for i in range(2):
         # Add core switches
-        g.add_node("core{0}".format(i+1), typ="switch")
+        sw_name = "core{0}".format(i+1)
+        g.add_node(sw_name, typ="switch", dpid=DPIDS[sw_name])
 
         # Add links between core switches and edge switches
         for j in range(4):
             src = "core{0}".format(i+1)
             dst = "edge{0}".format(j+1)
             g.add_edge(src, dst, capacity=1, port=PORT_NUMS[src][dst])
-            g.add_edge(dst, src, capacity=1)
+            g.add_edge(dst, src, capacity=1, port=PORT_NUMS[dst][src])
 
     nx.write_graphml(g, "milk.graphml")
 
