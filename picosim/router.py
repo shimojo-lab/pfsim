@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from heapq import heappop, heappush
 from logging import getLogger
+from math import inf
 
 import networkx as nx
 
@@ -111,11 +112,23 @@ class GreedyRouter(Router):
         if self.cache.has(src, dst):
             return self.cache.get(src, dst)
 
-        path = nx.dijkstra_path(self.graph, source=src.name, target=dst.name,
-                                weight="traffic")
-        self.cache.add(src, dst, path, job)
+        paths = list(nx.all_shortest_paths(self.graph, src.name, dst.name))
+        min_path = paths[0]
+        min_cost = inf
 
-        return path
+        for path in paths:
+            cost = 0
+
+            for u, v in zip(path[:-1], path[1:]):
+                cost += self.graph[u][v]["traffic"]
+
+            if cost < min_cost:
+                min_path = path
+                min_cost = cost
+
+        self.cache.add(src, dst, min_path, job)
+
+        return min_path
 
 
 class GreedyRouter2(Router):
@@ -145,8 +158,21 @@ class GreedyRouter2(Router):
         if self.cache.has(src, dst):
             return self.cache.get(src, dst)
 
-        path = self._widest_path(src.name, dst.name)
+        paths = list(nx.all_shortest_paths(self.graph, src.name, dst.name))
+        min_cost = inf
+        min_path = paths[0]
+        min_cost = inf
 
-        self.cache.add(src, dst, path, job)
+        for path in paths:
+            cost = 0
 
-        return path
+            for u, v in zip(path[:-1], path[1:]):
+                cost = max(self.graph[u][v]["traffic"], cost)
+
+            if cost < min_cost:
+                min_path = path
+                min_cost = cost
+
+        self.cache.add(src, dst, min_path, job)
+
+        return min_path
