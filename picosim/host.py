@@ -1,5 +1,5 @@
 class Host:
-    def __init__(self, name, capacity=1, **kwargs):
+    def __init__(self, name, capacity=1, mac=None, **kwargs):
         # Host name
         self.name = name
         # Maximum number of processes which this host can accomodate
@@ -10,6 +10,8 @@ class Host:
         self.job = None
         # List of processes running on this host
         self.procs = []
+        # MAC address
+        self.mac = mac
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
