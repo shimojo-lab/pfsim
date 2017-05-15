@@ -1,7 +1,6 @@
 import random
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from heapq import heappop, heappush
 from logging import getLogger
 from math import inf
 
@@ -134,25 +133,6 @@ class GreedyRouter(Router):
 class GreedyRouter2(Router):
     def __init__(self, graph, hosts=None, switches=None):
         super().__init__(graph, hosts=hosts, switches=switches)
-
-    def _widest_path(self, src, dst):
-        q = []
-        visited = set()
-
-        heappush(q, (0, src, []))
-        while q:
-            cost, v, path = heappop(q)
-            if v in visited:
-                continue
-            visited.add(v)
-
-            if v == dst:
-                return path + [dst]
-
-            for u in self.graph.neighbors_iter(v):
-                if u not in visited:
-                    cost2 = self.graph[v][u]["traffic"]
-                    heappush(q, (max(cost, cost2), u, path + [v]))
 
     def route(self, src, dst, job=None):
         if self.cache.has(src, dst):
