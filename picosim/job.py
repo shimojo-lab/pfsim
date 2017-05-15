@@ -50,13 +50,47 @@ class Job:
 
         self.finished_at = self.simulator.time
 
+    def _hoge(self):
+        host_tm = defaultdict(lambda: 0)
+
+        for src_rank, dst_rank, traffic in self.traffic_matrix.adj_list():
+            src_host = self.procs[src_rank].host
+            dst_host = self.procs[dst_rank].host
+
+            host_tm[(src_host, dst_host)] += traffic
+
+        host_adj_list = list(host_tm.items())
+        host_adj_list.sort(key=lambda x: x[1], reverse=True)
+
+        print("=" * 80)
+        for (src_host, dst_host), traffic in host_adj_list:
+            print(src_host, dst_host, traffic)
+
+        adj_list = []
+
+        for (src_host, dst_host), traffic in host_adj_list:
+            for src_proc in src_host.procs:
+                for dst_proc in dst_host.procs:
+                    src_rank = src_proc.rank
+                    dst_rank = dst_proc.rank
+
+                    if (src_rank, dst_rank) not in self.traffic_matrix.dok:
+                        continue
+
+                    traffic = self.traffic_matrix.dok[(src_rank, dst_rank)]
+
+                    adj_list.append((src_rank, dst_rank, traffic))
+
+        return adj_list
+
     def _started(self, job):
         if self != job:
             return
 
         self.started_at = self.simulator.time
 
-        for src, dst, traffic in self.traffic_matrix.items():
+        # for src, dst, traffic in self._hoge():
+        for src, dst, traffic in self.traffic_matrix.adj_list():
             self.simulator.schedule("job.message", job=job,
                                     src_proc=self.procs[src],
                                     dst_proc=self.procs[dst],

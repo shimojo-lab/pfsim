@@ -5,12 +5,19 @@ import tarfile
 class TrafficMatrix:
     _cache = {}
 
-    def __init__(self, n_procs, coo=[]):
+    def __init__(self, n_procs, dok={}):
         self.n_procs = n_procs
-        self.coo = coo
+        self.dok = dok
 
-    def items(self):
-        return self.coo
+    def adj_list(self):
+        coo = []
+
+        for (src, dst), traffic in self.dok.items():
+            coo.append((src, dst, traffic))
+
+        coo.sort(key=lambda x: x[2], reverse=True)
+
+        return coo
 
     def __len__(self):
         return len(self.coo)
@@ -29,7 +36,7 @@ class TrafficMatrix:
             return cls._cache[path]
 
         # c.f. https://www.wikiwand.com/en/Sparse_matrix
-        coo = []
+        dok = {}
         n_procs = 0
 
         with tarfile.open(path, "r:gz") as tar:
@@ -46,12 +53,9 @@ class TrafficMatrix:
                         if tx_messages <= 0:
                             continue
 
-                        coo.append((src, dst, trace["tx_bytes"][dst]))
+                        dok[(src, dst)] = trace["tx_bytes"][dst]
 
-        # Inplace sort (src, dst, volume) tripltes by volume
-        coo.sort(key=lambda triple: triple[2], reverse=True)
-
-        matrix = cls(n_procs, coo)
+        matrix = cls(n_procs, dok)
 
         cls._cache[path] = matrix
 
