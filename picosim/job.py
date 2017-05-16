@@ -62,10 +62,6 @@ class Job:
         host_adj_list = list(host_tm.items())
         host_adj_list.sort(key=lambda x: x[1], reverse=True)
 
-        print("=" * 80)
-        for (src_host, dst_host), traffic in host_adj_list:
-            print(src_host, dst_host, traffic)
-
         adj_list = []
 
         for (src_host, dst_host), traffic in host_adj_list:
