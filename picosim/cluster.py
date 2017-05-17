@@ -7,6 +7,7 @@ import yaml
 from .host import Host
 from .host_selector import HostSelector
 from .process_mapper import ProcessMapper
+from .router import Router
 from .switch import Switch
 
 logger = getLogger(__name__)
@@ -31,6 +32,7 @@ class Cluster:
 
         assert issubclass(host_selector, HostSelector)
         assert issubclass(process_mapper, ProcessMapper)
+        assert issubclass(router, Router)
 
         self.scheduler = scheduler(hosts=self.hosts.values(),
                                    simulator=simulator,
