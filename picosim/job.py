@@ -85,13 +85,6 @@ class Job:
 
         self.started_at = self.simulator.time
 
-        # for src, dst, traffic in self._hoge():
-        for src, dst, traffic in self.traffic_matrix.adj_list():
-            self.simulator.schedule("job.message", job=job,
-                                    src_proc=self.procs[src],
-                                    dst_proc=self.procs[dst],
-                                    traffic=traffic)
-
     def __repr__(self):
         return "<Job {0} np:{1} {2}>".format(self.name, self.n_procs,
                                              self.status.name)

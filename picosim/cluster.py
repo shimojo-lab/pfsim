@@ -42,7 +42,7 @@ class Cluster:
         self.router = router(graph=self.graph, hosts=self.hosts.values(),
                              switches=self.switches.values())
         self.simulator = simulator
-        self.simulator.register("job.message", self._job_message)
+        self.simulator.register("job.started", self._job_started)
         self.simulator.register("job.finished", self._job_finished)
 
         for u, v, attrs in self.graph.edges_iter(data=True):
@@ -59,17 +59,20 @@ class Cluster:
 
             switch.fdb.add(src, dst, next_node, job)
 
-    def _job_message(self, job, src_proc, dst_proc, traffic):
-        path = self.router.route(src_proc.host, dst_proc.host, job)
+    def _job_started(self, job):
+        for src, dst, traffic in job.traffic_matrix.adj_list():
+            src_proc = job.procs[src]
+            dst_proc = job.procs[dst]
+            path = self.router.route(src_proc.host, dst_proc.host, job)
 
-        self._update_fdbs(src_proc.host, dst_proc.host, path, job)
+            self._update_fdbs(src_proc.host, dst_proc.host, path, job)
 
-        for u, v in zip(path[1:-1], path[2:-1]):
-            edge = self.graph[u][v]
-            edge["traffic"] += traffic
-            edge["flows"] += 1
-            job.link_usage[u][v] += traffic
-            job.link_flows[u][v] += 1
+            for u, v in zip(path[1:-1], path[2:-1]):
+                edge = self.graph[u][v]
+                edge["traffic"] += traffic
+                edge["flows"] += 1
+                job.link_usage[u][v] += traffic
+                job.link_flows[u][v] += 1
 
     def _job_finished(self, job):
         # Compute return paths if not already installed

@@ -73,7 +73,7 @@ class InterconnectMetricsCollector:
             self.max_flows
         ]
 
-        simulator.register("job.message", self._collect, prio=-inf)
+        simulator.register("job.started", self._collect, prio=-inf)
 
     def _collect(self, **kwargs):
         time = self.simulator.time
