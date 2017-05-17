@@ -62,12 +62,14 @@ class InterconnectMetricsCollector:
         self.cluster = cluster
 
         self.max_congestion = TimeSeriesSamples("Maximum Congestion")
-        self.stddev_congestion = TimeSeriesSamples("Congestion Std Deviation")
+        self.stddev_congestion = TimeSeriesSamples("Congestion StdDev")
+        self.cv_congestion = TimeSeriesSamples("Congestion CV")
         self.max_flows = TimeSeriesSamples("Maximum Number of Flows")
 
         self.metrics = [
             self.max_congestion,
             self.stddev_congestion,
+            self.cv_congestion,
             self.max_flows
         ]
 
@@ -98,9 +100,14 @@ class InterconnectMetricsCollector:
             m2_congestion += delta * delta2
 
         stddev_congestion = sqrt(m2_congestion / (n - 1))
+        if mean_congestion == 0.0:
+            cv_congestion = 0.0
+        else:
+            cv_congestion = stddev_congestion / mean_congestion
 
         self.max_congestion.add(time, max_congestion)
         self.stddev_congestion.add(time, stddev_congestion)
+        self.cv_congestion.add(time, cv_congestion)
         self.max_flows.add(time, max_flows)
 
     def report(self):
