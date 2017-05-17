@@ -1,6 +1,8 @@
 import json
 import tarfile
 
+import networkx as nx
+
 
 class TrafficMatrix:
     _cache = {}
@@ -18,6 +20,15 @@ class TrafficMatrix:
         coo.sort(key=lambda x: x[2], reverse=True)
 
         return coo
+
+    def to_graph(self):
+        g = nx.DiGraph()
+        g.add_nodes_from(range(self.n_procs))
+
+        for (src, dst), traffic in self.dok.items():
+            g.add_edge(src, dst, traffic=traffic)
+
+        return g
 
     def __len__(self):
         return len(self.coo)
