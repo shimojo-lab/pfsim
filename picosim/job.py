@@ -50,7 +50,7 @@ class Job:
 
         self.finished_at = self.simulator.time
 
-    def _hoge(self):
+    def host_traffic_adj_list(self):
         host_tm = defaultdict(lambda: 0)
 
         for src_rank, dst_rank, traffic in self.traffic_matrix.adj_list():
