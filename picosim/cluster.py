@@ -71,8 +71,8 @@ class Cluster:
                 edge = self.graph[u][v]
                 edge["traffic"] += traffic
                 edge["flows"] += 1
-                job.link_usage[u][v] += traffic
-                job.link_flows[u][v] += 1
+                job.link_usage[(u, v)] += traffic
+                job.link_flows[(u, v)] += 1
 
     def _job_finished(self, job):
         # Compute return paths if not already installed
@@ -95,13 +95,11 @@ class Cluster:
         # Clear routing cache for this job
         self.router.cache.remove_job(job)
 
-        for u, v_traffic in job.link_usage.items():
-            for v, traffic in v_traffic.items():
-                self.graph[u][v]["traffic"] -= traffic
+        for (u, v), traffic in job.link_usage.items():
+            self.graph[u][v]["traffic"] -= traffic
 
-        for u, v_flows in job.link_flows.items():
-            for v, flows in v_flows.items():
-                self.graph[u][v]["flows"] -= flows
+        for (u, v), flows in job.link_flows.items():
+            self.graph[u][v]["flows"] -= flows
 
     def submit_job(self, job, time=0.0):
         self.simulator.schedule("job.submitted", time, job=job)

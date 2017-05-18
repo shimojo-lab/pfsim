@@ -20,8 +20,8 @@ class Job:
         if traffic_matrix is None:
             traffic_matrix = TrafficMatrix(n_procs)
         self.traffic_matrix = traffic_matrix
-        self.link_usage = defaultdict(lambda: defaultdict(lambda: 0))
-        self.link_flows = defaultdict(lambda: defaultdict(lambda: 0))
+        self.link_usage = defaultdict(lambda: 0)
+        self.link_flows = defaultdict(lambda: 0)
         self.generator = generator
 
         self.hosts = []
