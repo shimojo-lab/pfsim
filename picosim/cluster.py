@@ -62,11 +62,11 @@ class Cluster:
     def _job_started(self, job):
         adj_list = job.traffic_matrix.reordered_adj_list(job.procs)
         for src, dst, traffic in adj_list:
-            src_proc = job.procs[src]
-            dst_proc = job.procs[dst]
-            path = self.router.route(src_proc.host, dst_proc.host, job)
+            src_host = job.procs[src].host
+            dst_host = job.procs[dst].host
+            path = self.router.route(src_host, dst_host, job)
 
-            self._update_fdbs(src_proc.host, dst_proc.host, path, job)
+            self._update_fdbs(src_host, dst_host, path, job)
 
             for u, v in zip(path[1:-1], path[2:-1]):
                 edge = self.graph[u][v]
@@ -75,20 +75,19 @@ class Cluster:
                 job.link_usage[(u, v)] += traffic
                 job.link_flows[(u, v)] += 1
 
-    def _job_finished(self, job):
         # Compute return paths if not already installed
-        # TODO Do NOT use private members of PathCache
-        for src, dst in self.router.cache._jobs[job]:
-                # Return path is already installed
-                if self.router.cache.has(dst, src):
-                    continue
+        for src, dst, traffic in adj_list:
+            src_host = job.procs[src].host
+            dst_host = job.procs[dst].host
+            # Return path is already installed
+            if self.router.cache.has(dst_host, src_host):
+                continue
 
-                # Compute return paths
-                path = self.router.route(dst, src)
-                self._update_fdbs(dst, src, path, job)
+            # Compute return paths
+            path = self.router.route(dst_host, src_host)
+            self._update_fdbs(dst_host, src_host, path, job)
 
-        self.export_fdbs()
-
+    def _job_finished(self, job):
         # Clear FDB for this job
         for switch in self.switches.values():
             switch.fdb.remove_job(job)
@@ -117,21 +116,19 @@ class Cluster:
             self.graph.size()))
         logger.info("=" * 80)
 
-    def export_fdbs(self):
+    def write_flowtable(self, path):
         output = {}
 
         graph = nx.Graph(self.graph)
         mst = nx.minimum_spanning_tree(graph)
+        # Links that need to be disabled
         diff = nx.difference(graph, mst)
 
         for switch in self.switches.values():
-            # TODO Remove this
-            # print("FDB for switch", switch.name)
-            # switch.fdb.dump()
-
             output[switch.dpid] = {}
             output[switch.dpid]["fdb"] = {}
 
+            # Write FDB
             for src in switch.fdb._fdb.keys():
                 output[switch.dpid]["fdb"][src.mac] = {}
 
@@ -139,10 +136,11 @@ class Cluster:
                     port = self.graph[switch.name][nex.name]["port"]
                     output[switch.dpid]["fdb"][src.mac][dst.mac] = port
 
+            # Write list of blocked ports (to remove loops)
             output[switch.dpid]["blocked_ports"] = [
                 self.graph[switch.name][u]["port"] for u in
                 diff.neighbors_iter(switch.name)
             ]
 
-        with open("flowtable.yml", "w") as f:
+        with open(path, "w") as f:
             yaml.dump(output, f, explicit_start=True, default_flow_style=False)
