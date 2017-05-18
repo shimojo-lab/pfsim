@@ -60,7 +60,8 @@ class Cluster:
             switch.fdb.add(src, dst, next_node, job)
 
     def _job_started(self, job):
-        for src, dst, traffic in job.traffic_matrix.adj_list():
+        adj_list = job.traffic_matrix.reordered_adj_list(job.procs)
+        for src, dst, traffic in adj_list:
             src_proc = job.procs[src]
             dst_proc = job.procs[dst]
             path = self.router.route(src_proc.host, dst_proc.host, job)
