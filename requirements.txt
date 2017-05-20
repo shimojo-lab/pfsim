@@ -9,4 +9,5 @@ numpy==1.12.1
 python-dateutil==2.6.0
 pytz==2017.2
 PyYAML==3.12
+requests==2.14.2
 schema==0.6.5
