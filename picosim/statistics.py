@@ -1,5 +1,5 @@
 from logging import getLogger
-from math import inf, nan
+from math import inf, nan, sqrt
 
 import matplotlib.pyplot as plt
 
@@ -30,6 +30,14 @@ class Samples:
 
         if self.store:
             self.values.append(value)
+
+    @property
+    def sd(self):
+        return sqrt(self.variance)
+
+    @property
+    def cv(self):
+        return self.sd / self.mean
 
     @property
     def mean(self):

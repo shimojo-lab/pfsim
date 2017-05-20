@@ -1,5 +1,5 @@
 from logging import getLogger
-from math import inf, sqrt
+from math import inf
 from pathlib import Path
 
 from .statistics import Samples, TimeSeriesSamples
@@ -78,37 +78,20 @@ class InterconnectMetricsCollector:
     def _collect(self, **kwargs):
         time = self.simulator.time
 
-        n = 0
-        mean_congestion = 0.0
-        m2_congestion = 0.0
-        max_congestion = -inf
-        max_flows = -inf
+        flow = Samples("Number of Flows", store=False)
+        congestion = Samples("Congestion", store=False)
 
         for u, v, attrs in self.cluster.graph.edges_iter(data=True):
             if u in self.cluster.hosts or v in self.cluster.hosts:
                 continue
 
-            congestion = attrs["traffic"] / attrs["capacity"]
+            congestion.add(attrs["traffic"] / attrs["capacity"])
+            flow.add(attrs["flows"])
 
-            max_congestion = max(congestion, max_congestion)
-            max_flows = max(attrs["flows"], max_flows)
-
-            n += 1
-            delta = congestion - mean_congestion
-            mean_congestion += delta / n
-            delta2 = congestion - mean_congestion
-            m2_congestion += delta * delta2
-
-        stddev_congestion = sqrt(m2_congestion / (n - 1))
-        if mean_congestion == 0.0:
-            cv_congestion = 0.0
-        else:
-            cv_congestion = stddev_congestion / mean_congestion
-
-        self.max_congestion.add(time, max_congestion)
-        self.stddev_congestion.add(time, stddev_congestion)
-        self.cv_congestion.add(time, cv_congestion)
-        self.max_flows.add(time, max_flows)
+        self.max_congestion.add(time, congestion.max)
+        self.stddev_congestion.add(time, congestion.sd)
+        self.cv_congestion.add(time, congestion.cv)
+        self.max_flows.add(time, flow.max)
 
     def report(self):
         for metric in self.metrics:
