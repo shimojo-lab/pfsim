@@ -1,4 +1,6 @@
+from copy import deepcopy
 from importlib import import_module
+from itertools import product
 from logging import FileHandler, getLogger
 from os import makedirs
 from pathlib import Path
@@ -16,16 +18,16 @@ from .simulator import Simulator
 
 logger = getLogger(__name__)
 
-SCENARIO_CONF_SCHEMA = Schema({
+EXPERIMENT_CONF_SCHEMA = Schema({
     "duration": Or(int, float),
     "topology": And(str, lambda p: Path(p).exists(),
                     error="Topology file must exist"),
     "output": str,
     "algorithms": {
-        "scheduler": str,
-        "host_selector": str,
-        "process_mapper": str,
-        "router": str
+        "scheduler": [str],
+        "host_selector": [str],
+        "process_mapper": [str],
+        "router": [str]
     },
     "jobs": [{
         "submit": {
@@ -42,10 +44,6 @@ SCENARIO_CONF_SCHEMA = Schema({
         },
         "trace": str
     }]
-})
-
-EXPERIMENT_CONF_SCHEMA = Schema({
-    "scenarios": [SCENARIO_CONF_SCHEMA]
 })
 
 
@@ -137,10 +135,27 @@ class Scenario:
 
 class Experiment:
     def __init__(self, path):
-        self.scenarios = []
-
+        self.path = path
         with open(path) as f:
-            conf = EXPERIMENT_CONF_SCHEMA.validate(yaml.load(f))
+            self.conf = EXPERIMENT_CONF_SCHEMA.validate(yaml.load(f))
 
-        for scenario_conf in conf["scenarios"]:
-            self.scenarios.append(Scenario(path, scenario_conf))
+    def run(self):
+        algorithm_conf = self.conf["algorithms"]
+        schedulers = algorithm_conf["scheduler"]
+        host_selectors = algorithm_conf["host_selector"]
+        process_mappers = algorithm_conf["process_mapper"]
+        routers = algorithm_conf["router"]
+
+        algorithms = product(schedulers, host_selectors, process_mappers,
+                             routers)
+
+        for (sched, hs, pm, rt) in algorithms:
+            scenario_conf = deepcopy(self.conf)
+            algorithm_conf = scenario_conf["algorithms"]
+            algorithm_conf["scheduler"] = sched
+            algorithm_conf["host_selector"] = hs
+            algorithm_conf["process_mapper"] = pm
+            algorithm_conf["router"] = rt
+
+            scenario = Scenario(self.path, scenario_conf)
+            scenario.run()

@@ -48,6 +48,4 @@ def main():
     configure_logging(verbose=args["--verbose"])
 
     experiment = Experiment(args["<path/to/scenario>"])
-
-    for scenario in experiment.scenarios:
-        scenario.run()
+    experiment.run()
