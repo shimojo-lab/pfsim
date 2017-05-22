@@ -24,4 +24,4 @@ jobs:
       distribution: picosim.math.ExponentialDistribution
       params:
         lambd: 0.2
-    trace: traces/milc-128.tar.gz
+    trace: traces/openfoam-dambreak-160.tar.gz

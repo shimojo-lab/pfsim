@@ -1,115 +1,27 @@
 ---
-scenarios:
-  - duration: 1000.0
-    topology: topologies/milk.graphml
-    output: output/milk-ft-dmodk
-    algorithms:
-      scheduler: picosim.scheduler.FCFSScheduler
-      host_selector: picosim.host_selector.LinearHostSelector
-      process_mapper: picosim.process_mapper.LinearProcessMapper
-      router: picosim.router.DmodKRouter
-    jobs:
-      - submit:
-          distribution: picosim.math.ExponentialDistribution
-          params:
-            lambd: 0.1
-        duration:
-          distribution: picosim.math.ExponentialDistribution
-          params:
-            lambd: 0.2
-        trace: traces/ft-c-128.tar.gz
-
-  - duration: 1000.0
-    topology: topologies/milk.graphml
-    output: output/milk-ft-random
-    algorithms:
-      scheduler: picosim.scheduler.FCFSScheduler
-      host_selector: picosim.host_selector.LinearHostSelector
-      process_mapper: picosim.process_mapper.LinearProcessMapper
-      router: picosim.router.RandomRouter
-    jobs:
-      - submit:
-          distribution: picosim.math.ExponentialDistribution
-          params:
-            lambd: 0.1
-        duration:
-          distribution: picosim.math.ExponentialDistribution
-          params:
-            lambd: 0.2
-        trace: traces/ft-c-128.tar.gz
-
-  - duration: 1000.0
-    topology: topologies/milk.graphml
-    output: output/milk-ft-greedy
-    algorithms:
-      scheduler: picosim.scheduler.FCFSScheduler
-      host_selector: picosim.host_selector.LinearHostSelector
-      process_mapper: picosim.process_mapper.LinearProcessMapper
-      router: picosim.router.GreedyRouter
-    jobs:
-      - submit:
-          distribution: picosim.math.ExponentialDistribution
-          params:
-            lambd: 0.1
-        duration:
-          distribution: picosim.math.ExponentialDistribution
-          params:
-            lambd: 0.2
-        trace: traces/ft-c-128.tar.gz
-
-  - duration: 1000.0
-    topology: topologies/milk.graphml
-    output: output/milk-ft-random-dmodk
-    algorithms:
-      scheduler: picosim.scheduler.FCFSScheduler
-      host_selector: picosim.host_selector.RandomHostSelector
-      process_mapper: picosim.process_mapper.LinearProcessMapper
-      router: picosim.router.DmodKRouter
-    jobs:
-      - submit:
-          distribution: picosim.math.ExponentialDistribution
-          params:
-            lambd: 0.1
-        duration:
-          distribution: picosim.math.ExponentialDistribution
-          params:
-            lambd: 0.2
-        trace: traces/ft-c-128.tar.gz
-
-  - duration: 1000.0
-    topology: topologies/milk.graphml
-    output: output/milk-ft-random-random
-    algorithms:
-      scheduler: picosim.scheduler.FCFSScheduler
-      host_selector: picosim.host_selector.RandomHostSelector
-      process_mapper: picosim.process_mapper.LinearProcessMapper
-      router: picosim.router.RandomRouter
-    jobs:
-      - submit:
-          distribution: picosim.math.ExponentialDistribution
-          params:
-            lambd: 0.1
-        duration:
-          distribution: picosim.math.ExponentialDistribution
-          params:
-            lambd: 0.2
-        trace: traces/ft-c-128.tar.gz
-
-  - duration: 1000.0
-    topology: topologies/milk.graphml
-    output: output/milk-ft-random-greedy
-    algorithms:
-      scheduler: picosim.scheduler.FCFSScheduler
-      host_selector: picosim.host_selector.RandomHostSelector
-      process_mapper: picosim.process_mapper.LinearProcessMapper
-      router: picosim.router.GreedyRouter
-    jobs:
-      - submit:
-          distribution: picosim.math.ExponentialDistribution
-          params:
-            lambd: 0.1
-        duration:
-          distribution: picosim.math.ExponentialDistribution
-          params:
-            lambd: 0.2
-        trace: traces/ft-c-128.tar.gz
+duration: 1000.0
+topology: topologies/milk.graphml
+output: output/milk-cg-dmodk
+algorithms:
+  scheduler:
+    - picosim.scheduler.FCFSScheduler
+  host_selector:
+    - picosim.host_selector.LinearHostSelector
+    - picosim.host_selector.RandomHostSelector
+  process_mapper:
+    - picosim.process_mapper.LinearProcessMapper
+    - picosim.process_mapper.CyclicProcessMapper
+  router:
+    - picosim.router.DmodKRouter
+    - picosim.router.GreedyRouter
+    - picosim.router.GreedyRouter2
+jobs:
+  - submit:
+      distribution: picosim.math.ExponentialDistribution
+      params:
+        lambd: 0.1
+    duration:
+      distribution: picosim.math.ExponentialDistribution
+      params:
+        lambd: 0.2
+    trace: traces/ft-c-128.tar.gz
