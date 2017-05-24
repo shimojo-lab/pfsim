@@ -11,8 +11,14 @@ import numpy as np
 import seaborn as sns
 
 
+width = 3.487
+height = width / 1.618
+
+
 def plot_traffic_matrix(traffic_matrix, path):
     fig, ax = plt.subplots()
+    fig.subplots_adjust(left=.05, bottom=.18, top=.90)
+
     cmap = sns.cubehelix_palette(dark=0, light=1, as_cmap=True)
     img = ax.imshow(traffic_matrix, cmap=cmap)
     cb = fig.colorbar(img)
@@ -20,11 +26,15 @@ def plot_traffic_matrix(traffic_matrix, path):
     ax.set_xlabel("Sender Rank")
     ax.set_ylabel("Receiver Rank")
     ax.grid(b=False)
-    fig.savefig(path, bbox_inches="tight")
+
+    fig.set_size_inches(width, height)
+    fig.savefig(path)
 
 
 def plot_message_matrix(message_matrix, path):
     fig, ax = plt.subplots()
+    fig.subplots_adjust(left=.05, bottom=.18, top=.90)
+
     cmap = sns.cubehelix_palette(dark=0, light=1, as_cmap=True)
     img = ax.imshow(message_matrix, cmap=cmap)
     cb = fig.colorbar(img)
@@ -32,11 +42,14 @@ def plot_message_matrix(message_matrix, path):
     ax.set_xlabel("Sender Rank")
     ax.set_ylabel("Receiver Rank")
     ax.grid(b=False)
-    fig.savefig(path, bbox_inches="tight")
+
+    fig.set_size_inches(width, height)
+    fig.savefig(path)
 
 
 def plot_message_size_histogram(message_sizes, path):
     fig, ax = plt.subplots()
+    fig.subplots_adjust(left=.27, bottom=.20, right=.88, top=.97)
 
     values = list(message_sizes.keys())
     weights = list(message_sizes.values())
@@ -44,7 +57,9 @@ def plot_message_size_histogram(message_sizes, path):
     ax.hist(values, bins=50, weights=weights)
     ax.set_xlabel("Message Size [B]")
     ax.set_ylabel("Messages Sent")
-    fig.savefig(path, bbox_inches="tight")
+
+    fig.set_size_inches(width, height)
+    fig.savefig(path)
 
 
 def main():
