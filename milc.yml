@@ -4,24 +4,24 @@ topology: topologies/milk.graphml
 output: output/milk-cg-dmodk
 algorithms:
   scheduler:
-    - picosim.scheduler.FCFSScheduler
+    - pfsim.scheduler.FCFSScheduler
   host_selector:
-    - picosim.host_selector.LinearHostSelector
-    - picosim.host_selector.RandomHostSelector
+    - pfsim.host_selector.LinearHostSelector
+    - pfsim.host_selector.RandomHostSelector
   process_mapper:
-    - picosim.process_mapper.LinearProcessMapper
-    - picosim.process_mapper.CyclicProcessMapper
+    - pfsim.process_mapper.LinearProcessMapper
+    - pfsim.process_mapper.CyclicProcessMapper
   router:
-    - picosim.router.DmodKRouter
-    - picosim.router.GreedyRouter
-    - picosim.router.GreedyRouter2
+    - pfsim.router.DmodKRouter
+    - pfsim.router.GreedyRouter
+    - pfsim.router.GreedyRouter2
 jobs:
   - submit:
-      distribution: picosim.math.ExponentialDistribution
+      distribution: pfsim.math.ExponentialDistribution
       params:
         lambd: 0.1
     duration:
-      distribution: picosim.math.ExponentialDistribution
+      distribution: pfsim.math.ExponentialDistribution
       params:
         lambd: 0.2
     trace: traces/milc-128.tar.gz

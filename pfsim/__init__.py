@@ -1,7 +1,7 @@
 """
 Usage:
-  picosim [-v | --verbose] <path/to/scenario>
-  picosim (-h | --help)
+  pfsim [-v | --verbose] <path/to/scenario>
+  pfsim (-h | --help)
 
 Options:
   -h --help     Show this help.
@@ -44,7 +44,7 @@ def configure_logging(verbose=False):
 
 
 def main():
-    args = docopt(__doc__, version="picosim 0.1.0")
+    args = docopt(__doc__, version="pfsim 0.1.0")
     configure_logging(verbose=args["--verbose"])
 
     experiment = Experiment(args["<path/to/scenario>"])
