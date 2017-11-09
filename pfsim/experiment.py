@@ -7,7 +7,7 @@ from pathlib import Path
 
 import networkx as nx
 
-from schema import And, Or, Schema
+from schema import Or, Schema
 
 import yaml
 
@@ -20,8 +20,7 @@ logger = getLogger(__name__)
 
 EXPERIMENT_CONF_SCHEMA = Schema({
     "duration": Or(int, float),
-    "topology": And(str, lambda p: Path(p).exists(),
-                    error="Topology file must exist"),
+    "topology": str,
     "output": str,
     "algorithms": {
         "scheduler": [str],
@@ -55,7 +54,7 @@ class Scenario:
         # Create cluster
         algorithms_conf = conf["algorithms"]
         self.cluster = Cluster(
-            graph=nx.read_graphml(conf["topology"]),
+            graph=nx.read_graphml(Path(path).parent / conf["topology"]),
             host_selector=self._load_class(algorithms_conf["host_selector"]),
             process_mapper=self._load_class(algorithms_conf["process_mapper"]),
             scheduler=self._load_class(algorithms_conf["scheduler"]),
