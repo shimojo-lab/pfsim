@@ -89,7 +89,12 @@ class Scenario:
         ]
 
         # Create output directory and log handlers
-        self.output_path = Path(path).parent / conf["output"]
+        self.output_path = Path(path).parent / \
+            "output" / \
+            algorithms_conf["scheduler"][16:] / \
+            algorithms_conf["host_selector"][20:] / \
+            algorithms_conf["process_mapper"][21:] / \
+            algorithms_conf["router"][13:]
         makedirs(self.output_path, exist_ok=True)
         log_path = Path(self.output_path) / "result.log"
         self.file_handler = FileHandler(str(log_path))
