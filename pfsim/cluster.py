@@ -1,3 +1,4 @@
+from collections import defaultdict
 from logging import getLogger
 
 import networkx as nx
@@ -60,10 +61,20 @@ class Cluster:
             switch.fdb.add(src, dst, next_node, job)
 
     def _job_started(self, job):
-        adj_list = job.traffic_matrix.reordered_adj_list(job.procs)
-        for src, dst, traffic in adj_list:
-            src_host = job.procs[src].host
-            dst_host = job.procs[dst].host
+        host_tm = defaultdict(lambda: 0)
+        host_fm = defaultdict(lambda: 0)
+
+        for (src_rank, dst_rank), traffic in job.traffic_matrix.dok.items():
+            src_host = job.procs[src_rank].host
+            dst_host = job.procs[dst_rank].host
+
+            host_tm[(src_host, dst_host)] += traffic
+            host_fm[(src_host, dst_host)] += 1
+
+        host_adj_list = list(host_tm.items())
+        host_adj_list.sort(key=lambda x: x[1], reverse=True)
+
+        for (src_host, dst_host), traffic in host_adj_list:
             path = self.router.route(src_host, dst_host, job)
 
             self._update_fdbs(src_host, dst_host, path, job)
@@ -71,14 +82,12 @@ class Cluster:
             for u, v in zip(path[1:-1], path[2:-1]):
                 edge = self.graph[u][v]
                 edge["traffic"] += traffic
-                edge["flows"] += 1
+                edge["flows"] += host_fm[(src_host, dst_host)]
                 job.link_usage[(u, v)] += traffic
-                job.link_flows[(u, v)] += 1
+                job.link_flows[(u, v)] += host_fm[(src_host, dst_host)]
 
         # Compute return paths if not already installed
-        for src, dst, traffic in adj_list:
-            src_host = job.procs[src].host
-            dst_host = job.procs[dst].host
+        for (src_host, dst_host), traffic in host_adj_list:
             # Return path is already installed
             if self.router.cache.has(dst_host, src_host):
                 continue

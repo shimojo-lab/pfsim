@@ -1,8 +1,6 @@
 import json
 import tarfile
 
-from collections import defaultdict
-
 import networkx as nx
 
 
@@ -12,45 +10,6 @@ class TrafficMatrix:
     def __init__(self, n_procs, dok={}):
         self.n_procs = n_procs
         self.dok = dok
-
-    def adj_list(self):
-        coo = []
-
-        for (src, dst), traffic in self.dok.items():
-            coo.append((src, dst, traffic))
-
-        coo.sort(key=lambda x: x[2], reverse=True)
-
-        return coo
-
-    def reordered_adj_list(self, procs):
-        host_traffic_matrix = defaultdict(lambda: 0)
-
-        for src_rank, dst_rank, traffic in self.adj_list():
-            src_host = procs[src_rank].host
-            dst_host = procs[dst_rank].host
-
-            host_traffic_matrix[(src_host, dst_host)] += traffic
-
-        host_adj_list = list(host_traffic_matrix.items())
-        host_adj_list.sort(key=lambda x: x[1], reverse=True)
-
-        adj_list = []
-
-        for (src_host, dst_host), traffic in host_adj_list:
-            for src_proc in src_host.procs:
-                for dst_proc in dst_host.procs:
-                    src_rank = src_proc.rank
-                    dst_rank = dst_proc.rank
-
-                    if (src_rank, dst_rank) not in self.dok:
-                        continue
-
-                    traffic = self.dok[(src_rank, dst_rank)]
-
-                    adj_list.append((src_rank, dst_rank, traffic))
-
-        return adj_list
 
     def to_graph(self):
         g = nx.DiGraph()
