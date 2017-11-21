@@ -110,14 +110,6 @@ class TimeSeriesSamples(Samples):
 
         return self._ts_m2 / self.current_time
 
-    def report(self):
-        logger.info("{0:=^80}".format(" " + self.name + "  "))
-        logger.info("Max:       {0}".format(self.max))
-        logger.info("Min:       {0}".format(self.min))
-        logger.info("Mean:      {0}".format(self.mean))
-        logger.info("Count:     {0}".format(self.count))
-        logger.info("Variance:  {0}".format(self.variance))
-
     def plot(self, path):
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)

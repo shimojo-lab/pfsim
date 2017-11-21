@@ -5,11 +5,13 @@ from .process import Process
 from .process_mapper import LinearProcessMapper, CyclicProcessMapper
 
 
-class TestLinearProcessMapper:
+class TestProcessMapper:
     def setup(self):
         self.hosts = [Host("h" + str(i), capacity=8) for i in range(8)]
         self.procs = [Process("j1", rank=i) for i in range(60)]
 
+
+class TestLinearProcessMapper(TestProcessMapper):
     def test_map(self):
         mapper = LinearProcessMapper()
         mapping = mapper.map(self.procs, self.hosts)
@@ -20,11 +22,7 @@ class TestLinearProcessMapper:
             assert len(list(group)) <= host.capacity
 
 
-class TestCyclicProcessMapper:
-    def setup(self):
-        self.hosts = [Host("h" + str(i), capacity=8) for i in range(8)]
-        self.procs = [Process("j1", rank=i) for i in range(60)]
-
+class TestCyclicProcessMapper(TestProcessMapper):
     def test_map(self):
         mapper = CyclicProcessMapper()
         mapping = mapper.map(self.procs, self.hosts)

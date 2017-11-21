@@ -15,36 +15,28 @@ width = 3.487
 height = width / 1.618
 
 
-def plot_traffic_matrix(traffic_matrix, path):
-    fig, ax = plt.subplots()
-    fig.subplots_adjust(left=.05, bottom=.18, top=.90)
-
-    cmap = sns.cubehelix_palette(dark=0, light=1, as_cmap=True)
-    img = ax.imshow(traffic_matrix, cmap=cmap)
-    cb = fig.colorbar(img)
-    cb.set_label("Sent Bytes")
-    ax.set_xlabel("Sender Rank")
-    ax.set_ylabel("Receiver Rank")
-    ax.grid(b=False)
-
-    fig.set_size_inches(width, height)
-    fig.savefig(path)
-
-
-def plot_message_matrix(message_matrix, path):
+def plot_matrix(message_matrix, path, title):
     fig, ax = plt.subplots()
     fig.subplots_adjust(left=.05, bottom=.18, top=.90)
 
     cmap = sns.cubehelix_palette(dark=0, light=1, as_cmap=True)
     img = ax.imshow(message_matrix, cmap=cmap)
     cb = fig.colorbar(img)
-    cb.set_label("Sent Messages")
+    cb.set_label(title)
     ax.set_xlabel("Sender Rank")
     ax.set_ylabel("Receiver Rank")
     ax.grid(b=False)
 
     fig.set_size_inches(width, height)
     fig.savefig(path)
+
+
+def plot_traffic_matrix(traffic_matrix, path):
+    plot_matrix(traffic_matrix, path, "Sent Bytes")
+
+
+def plot_message_matrix(message_matrix, path):
+    plot_matrix(message_matrix, path, "Sent Messages")
 
 
 def plot_message_size_histogram(message_sizes, path):
