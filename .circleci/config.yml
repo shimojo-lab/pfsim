@@ -24,4 +24,4 @@ jobs:
        - run:
            command: |
              . venv/bin/activate
-             flake8 --exclude=.direnv
+             flake8 --exclude=venv
