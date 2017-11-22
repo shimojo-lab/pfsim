@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, call
 
-from .simulator import Simulator
+from pfsim.simulator import Simulator
 
 
 class TestSimulator:

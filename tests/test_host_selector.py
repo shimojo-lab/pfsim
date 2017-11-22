@@ -1,6 +1,6 @@
-from .host import Host
-from .host_selector import LinearHostSelector, RandomHostSelector
-from .job import Job
+from pfsim.host import Host
+from pfsim.host_selector import LinearHostSelector, RandomHostSelector
+from pfsim.job import Job
 
 
 class TestLinearHostSelector:

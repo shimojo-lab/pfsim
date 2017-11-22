@@ -1,9 +1,9 @@
-from .host import Host
-from .host_selector import LinearHostSelector
-from .job import Job, JobStatus
-from .process_mapper import LinearProcessMapper
-from .scheduler import FCFSScheduler
-from .simulator import Simulator
+from pfsim.host import Host
+from pfsim.host_selector import LinearHostSelector
+from pfsim.job import Job, JobStatus
+from pfsim.process_mapper import LinearProcessMapper
+from pfsim.scheduler import FCFSScheduler
+from pfsim.simulator import Simulator
 
 
 class TestFCFSScheduler:
