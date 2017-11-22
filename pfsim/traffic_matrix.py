@@ -32,6 +32,17 @@ class TrafficMatrix:
         return 1.0 - self.density
 
     @classmethod
+    def _load_single_file(cls, f, dok):
+        trace = json.load(f)
+        src = trace["rank"]
+
+        for dst, tx_messages in enumerate(trace["tx_messages"]):
+            if tx_messages <= 0:
+                continue
+
+            dok[(src, dst)] = trace["tx_bytes"][dst]
+
+    @classmethod
     def load(cls, path):
         if path in cls._cache:
             return cls._cache[path]
@@ -46,15 +57,8 @@ class TrafficMatrix:
                     continue
 
                 with tar.extractfile(member) as f:
-                    trace = json.load(f)
-                    src = trace["rank"]
+                    cls._load_single_file(f, dok)
                     n_procs += 1
-
-                    for dst, tx_messages in enumerate(trace["tx_messages"]):
-                        if tx_messages <= 0:
-                            continue
-
-                        dok[(src, dst)] = trace["tx_bytes"][dst]
 
         matrix = cls(n_procs, dok)
 

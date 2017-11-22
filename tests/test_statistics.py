@@ -1,6 +1,6 @@
 from math import isclose, isnan
 
-from .statistics import Samples, TimeSeriesSamples
+from pfsim.statistics import Samples, TimeSeriesSamples
 
 
 class TestTimedSamples:

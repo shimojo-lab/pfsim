@@ -104,11 +104,9 @@ class Cluster:
         # Clear routing cache for this job
         self.router.cache.remove_job(job)
 
-        for (u, v), traffic in job.link_usage.items():
-            self.graph[u][v]["traffic"] -= traffic
-
-        for (u, v), flows in job.link_flows.items():
-            self.graph[u][v]["flows"] -= flows
+        for u, v in job.link_usage.keys():
+            self.graph[u][v]["traffic"] -= job.link_usage[(u, v)]
+            self.graph[u][v]["flows"] -= job.link_flows[(u, v)]
 
     def submit_job(self, job, time=0.0):
         self.simulator.schedule("job.submitted", time, job=job)

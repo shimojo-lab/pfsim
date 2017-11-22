@@ -1,8 +1,8 @@
 from itertools import groupby
 
-from .host import Host
-from .process import Process
-from .process_mapper import LinearProcessMapper, CyclicProcessMapper
+from pfsim.host import Host
+from pfsim.process import Process
+from pfsim.process_mapper import LinearProcessMapper, CyclicProcessMapper
 
 
 class TestProcessMapper:

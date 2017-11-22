@@ -1,7 +1,7 @@
 import networkx as nx
 
-from .host import Host
-from .router import DmodKRouter, GreedyRouter2, RandomRouter
+from pfsim.host import Host
+from pfsim.router import DmodKRouter, GreedyRouter2, RandomRouter
 
 
 class TestRandomRouter:
