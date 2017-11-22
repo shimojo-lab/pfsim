@@ -33,7 +33,7 @@ class LinearHostSelector(HostSelector):
             return None
 
         # Find all free blocks (consecutive unallocated hosts)
-        unallocated_blocks = self._find_unallocated_blocks()
+        unallocated_blocks = list(self._find_unallocated_blocks())
 
         # Are there any blocks larger than job.n_procs?
         # If yes, use the smallest one (to avoid fragmentation)
@@ -49,19 +49,17 @@ class LinearHostSelector(HostSelector):
         return self._select_hosts_from_blocks(job, cand_blocks)
 
     def _find_unallocated_blocks(self):
-        in_block = False
-        unallocated_blocks = []
+        block = []
 
         for host in self.hosts:
-            if in_block and host.allocated:
-                in_block = False
-            elif in_block and not host.allocated:
-                unallocated_blocks[-1].append(host)
-            elif not in_block and not host.allocated:
-                unallocated_blocks.append([host])
-                in_block = True
+            if not host.allocated:
+                block.append(host)
+            elif block:
+                yield block
+                block = []
 
-        return unallocated_blocks
+        if block:
+            yield block
 
     def _select_hosts_from_blocks(self, job, blocks):
         procs_togo = job.n_procs
