@@ -6,7 +6,7 @@ jobs:
      steps:
        - checkout
        - restore_cache:
-           key: deps-{{ .Branch }}-{{ checksum "requirements.txt" }}
+           key: deps-{{ checksum "requirements.txt" }}
        - run:
            name: Install dependencies
            command: |
@@ -15,7 +15,7 @@ jobs:
              pip install -r requirements.txt
              pip install nose flake8
        - save_cache:
-           key: deps-{{ .Branch }}-{{ checksum "requirements.txt" }}
+           key: deps-{{ checksum "requirements.txt" }}
            paths:
              - venv
        - run:
