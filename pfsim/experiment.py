@@ -89,7 +89,7 @@ class Scenario:
 
         # Create output directory and log handlers
         self.output_path = Path(path).parent / \
-            "output" / \
+            conf["output"] / \
             algorithms_conf["scheduler"].split(".")[-1] / \
             algorithms_conf["host_selector"].split(".")[-1] / \
             algorithms_conf["process_mapper"].split(".")[-1] / \
