@@ -1,6 +1,8 @@
 version: 2
 jobs:
    build:
+     environment:
+       CC_TEST_REPORTER_ID: 87695fce931f8beb2fd8887d8ae6d6771d4d28c6f4db11345a2600692dc49b12
      docker:
        - image: circleci/python:3.6
      steps:
@@ -13,7 +15,12 @@ jobs:
              python3 -m venv venv
              . venv/bin/activate
              pip install -r requirements.txt
-             pip install nose flake8
+             pip install nose flake8 coverage
+       - run:
+           name: Install Code Climate test-reporter
+           command: |
+             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+             chmod +x ./cc-test-reporter
        - save_cache:
            key: deps-{{ checksum "requirements.txt" }}
            paths:
@@ -22,7 +29,9 @@ jobs:
            name: Run unit tests
            command: |
              . venv/bin/activate
-             nosetests -v
+             ./cc-test-reporter before-build
+             nosetests -v --with-coverage --cover-package=pfsim --cover-xml
+             ./cc-test-reporter after-build --coverage-input-type=coverage.py --exit-code $?
        - run:
            name: Check source code style
            command: |
