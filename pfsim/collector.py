@@ -16,11 +16,6 @@ class MetricsCollector:
         for metric in self.metrics:
             metric.report()
 
-    def plot(self, output_dir):
-        for metric in self.metrics:
-            path = Path(output_dir) / Path(metric.name).with_suffix(".png")
-            metric.plot(str(path))
-
     def output_csv(self, output_dir):
         for metric in self.metrics:
             path = Path(output_dir) / Path(metric.name).with_suffix(".csv")
