@@ -61,7 +61,7 @@ class Samples:
     def output_csv(self, path):
         with open(path, "w", newline="") as f:
             writer = csv.writer(f, lineterminator="\n")
-            writer.writerow("Value")
+            writer.writerow(["Value"])
             writer.writerows([v] for v in self.values)
 
 
