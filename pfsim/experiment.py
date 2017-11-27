@@ -4,7 +4,9 @@ from itertools import product
 from logging import FileHandler, getLogger
 from os import makedirs
 from pathlib import Path
+from multiprocessing import Pool
 
+import sys
 import networkx as nx
 
 from schema import Or, Schema
@@ -137,11 +139,27 @@ class Scenario:
         return getattr(mod, cls_name)
 
 
+def wrapper(sched, hs, pm, rt):
+    experiment = Experiment(sys.argv[1])
+    experiment.parallel(sched, hs, pm, rt)
+
+
 class Experiment:
     def __init__(self, path):
         self.path = path
         with open(path) as f:
             self.conf = EXPERIMENT_CONF_SCHEMA.validate(yaml.load(f))
+
+    def parallel(self, sched, hs, pm, rt):
+        scenario_conf = deepcopy(self.conf)
+        algorithm_conf = scenario_conf["algorithms"]
+        algorithm_conf["scheduler"] = sched
+        algorithm_conf["host_selector"] = hs
+        algorithm_conf["process_mapper"] = pm
+        algorithm_conf["router"] = rt
+
+        scenario = Scenario(self.path, scenario_conf)
+        scenario.run()
 
     def run(self):
         algorithm_conf = self.conf["algorithms"]
@@ -152,14 +170,12 @@ class Experiment:
 
         algorithms = product(schedulers, host_selectors, process_mappers,
                              routers)
-
+        pool = Pool(4)
+        results = []
         for (sched, hs, pm, rt) in algorithms:
-            scenario_conf = deepcopy(self.conf)
-            algorithm_conf = scenario_conf["algorithms"]
-            algorithm_conf["scheduler"] = sched
-            algorithm_conf["host_selector"] = hs
-            algorithm_conf["process_mapper"] = pm
-            algorithm_conf["router"] = rt
-
-            scenario = Scenario(self.path, scenario_conf)
-            scenario.run()
+            res = pool.apply_async(wrapper, (sched, hs, pm, rt))
+            results.append(res)
+        pool.close()
+        pool.join()
+        for res in results:
+            res.get()
