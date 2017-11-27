@@ -1,7 +1,7 @@
 from logging import getLogger
 from math import inf, nan, sqrt
 
-import matplotlib.pyplot as plt
+import csv
 
 logger = getLogger(__name__)
 
@@ -58,12 +58,11 @@ class Samples:
         logger.info("Count:     {0}".format(self.count))
         logger.info("Variance:  {0}".format(self.variance))
 
-    def plot(self, path):
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1)
-        ax.hist(self.values, bins="auto")
-        fig.savefig(path)
-        plt.close(fig)
+    def output_csv(self, path):
+        with open(path, "w", newline="") as f:
+            writer = csv.writer(f, lineterminator="\n")
+            writer.writerow("Value")
+            writer.writerows([v] for v in self.values)
 
 
 class TimeSeriesSamples(Samples):
@@ -110,9 +109,8 @@ class TimeSeriesSamples(Samples):
 
         return self._ts_m2 / self.current_time
 
-    def plot(self, path):
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1)
-        ax.plot(self.times, self.values)
-        fig.savefig(path)
-        plt.close(fig)
+    def output_csv(self, path):
+        with open(path, "w", newline="") as f:
+            writer = csv.writer(f, lineterminator="\n")
+            writer.writerow(["Time", " Value"])
+            writer.writerows(zip(self.times, self.values))

@@ -21,6 +21,11 @@ class MetricsCollector:
             path = Path(output_dir) / Path(metric.name).with_suffix(".png")
             metric.plot(str(path))
 
+    def output_csv(self, output_dir):
+        for metric in self.metrics:
+            path = Path(output_dir) / Path(metric.name).with_suffix(".csv")
+            metric.output_csv(str(path))
+
 
 class SchedulerMetricsCollector(MetricsCollector):
     def __init__(self, simulator, cluster):

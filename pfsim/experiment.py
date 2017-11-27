@@ -112,7 +112,7 @@ class Scenario:
 
         for collector in self.collectors:
             collector.report()
-            collector.plot(self.output_path)
+            collector.output_csv(self.output_path)
 
         getLogger().removeHandler(self.file_handler)
 
