@@ -6,7 +6,7 @@ Usage:
 Options:
   -h --help     Show this help.
   -v --verbose  Enable verbose logging.
-  -p --parallel Decide parocess number.
+  -p --parallel Specify the degree of parallelism.
      --version  Show version info.
 """
 
@@ -49,7 +49,8 @@ def main():
     configure_logging(verbose=args["--verbose"])
 
     experiment = Experiment(args["<path/to/scenario>"])
-    if args["--parallel"] == []:
-        experiment.run()
-    elif args["--parallel"]:
-        experiment.run_parallel(args["--parallel"])
+    if args["--parallel"]:
+        process = args["--parallel"][0]
+        experiment.run_parallel(int(process))
+    else:
+        experiment.run_serial()

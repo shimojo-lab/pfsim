@@ -138,7 +138,7 @@ class Scenario:
         return getattr(mod, cls_name)
 
 
-def wrapper(path, conf):
+def run_scenario(path, conf):
     scenario = Scenario(path, conf)
     scenario.run()
 
@@ -159,7 +159,7 @@ class Experiment:
         algorithms = product(schedulers, host_selectors, process_mappers,
                              routers)
 
-        with Pool(int(process[0])) as pool:
+        with Pool(process) as pool:
             results = []
             for (sched, hs, pm, rt) in algorithms:
                 scenario_conf = deepcopy(self.conf)
@@ -169,7 +169,8 @@ class Experiment:
                 algorithm_conf["process_mapper"] = pm
                 algorithm_conf["router"] = rt
 
-                res = pool.apply_async(wrapper, (self.path, scenario_conf))
+                res = pool.apply_async(run_scenario, (self.path,
+                                                      scenario_conf))
                 results.append(res)
 
             pool.close()
@@ -178,7 +179,7 @@ class Experiment:
             for res in results:
                 res.get()
 
-    def run(self):
+    def run_serial(self):
         algorithm_conf = self.conf["algorithms"]
         schedulers = algorithm_conf["scheduler"]
         host_selectors = algorithm_conf["host_selector"]
