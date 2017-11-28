@@ -56,13 +56,13 @@ class TestTimedSamples:
         self.samples.add(3.0, 3.0)
         self.samples.add(6.0, 4.0)
 
-        f = StringIO()
-        self.samples.write_csv(f)
+        with StringIO() as f:
+            self.samples.write_csv(f)
 
-        assert f.getvalue() == "Time,Value\n"\
-                               "0.0,1.0\n"\
-                               "1.0,2.0\n"\
-                               "3.0,3.0\n"
+            assert f.getvalue() == "Time,Value\n"\
+                                   "0.0,1.0\n"\
+                                   "1.0,2.0\n"\
+                                   "3.0,3.0\n"
 
 
 class TestSamples:
@@ -99,10 +99,10 @@ class TestSamples:
         self.samples.add(2.0)
         self.samples.add(3.0)
 
-        f = StringIO()
-        self.samples.write_csv(f)
+        with StringIO() as f:
+            self.samples.write_csv(f)
 
-        assert f.getvalue() == "Value\n"\
-                               "1.0\n"\
-                               "2.0\n"\
-                               "3.0\n"
+            assert f.getvalue() == "Value\n"\
+                                   "1.0\n"\
+                                   "2.0\n"\
+                                   "3.0\n"
