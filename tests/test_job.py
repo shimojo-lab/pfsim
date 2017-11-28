@@ -2,7 +2,7 @@ from pfsim.simulator import Simulator
 from pfsim.job import Job
 
 
-class TestSimulator:
+class TestJob:
     def setup(self):
         self.sim = Simulator()
 
