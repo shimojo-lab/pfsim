@@ -111,7 +111,7 @@ class Cluster:
     def submit_job(self, job, time=0.0):
         self.simulator.schedule("job.submitted", time, job=job)
 
-    def report(self):
+    def report(self):  # pragma: no cover
         logger.info("{0:=^80}".format(" " + self.graph.name + "  "))
         logger.info("Number of Hosts:           {0}".format(
             len(self.hosts)))
