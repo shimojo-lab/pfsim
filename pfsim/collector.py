@@ -16,12 +16,12 @@ class MetricsCollector:
         for metric in self.metrics:
             metric.report()
 
-    def output_csv(self, output_dir):
+    def write_csvs(self, output_dir):
         for metric in self.metrics:
             path = Path(output_dir) / Path(metric.name).with_suffix(".csv")
 
             with open(path, "w", newline="") as f:
-                metric.output_csv(f)
+                metric.write_csv(f)
 
 
 class SchedulerMetricsCollector(MetricsCollector):
