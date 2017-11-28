@@ -43,10 +43,7 @@ class TrafficMatrix:
             dok[(src, dst)] = trace["tx_bytes"][dst]
 
     @classmethod
-    def load(cls, f):
-        if hasattr(f, "name") and f.name in cls._cache:
-            return cls._cache[f.name]
-
+    def _load(cls, f):
         # c.f. https://www.wikiwand.com/en/Sparse_matrix
         dok = {}
         n_procs = 0
@@ -60,7 +57,14 @@ class TrafficMatrix:
                     cls._load_single_file(f, dok)
                     n_procs += 1
 
-        matrix = cls(n_procs, dok)
+        return cls(n_procs, dok)
+
+    @classmethod
+    def load(cls, f):
+        if hasattr(f, "name") and f.name in cls._cache:
+            return cls._cache[f.name]
+
+        matrix = cls._load(f)
 
         if hasattr(f, "name"):
             cls._cache[f.name] = matrix
