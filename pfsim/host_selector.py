@@ -12,12 +12,12 @@ class HostSelector(ABC):
 
     # Check if there are enough PEs to run the given job
     @abstractmethod
-    def test(self, job):
+    def test(self, job):  # pragma: no cover
         pass
 
     # Return a list of hosts which should be allocated to the given job
     @abstractmethod
-    def select(self, job):
+    def select(self, job):  # pragma: no cover
         pass
 
     def _available_pes(self, hosts):

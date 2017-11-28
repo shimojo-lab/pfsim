@@ -14,6 +14,6 @@ class Process:
     def __hash__(self):
         return hash((self.job, self.rank))
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "<Process {0} rank:{1} on {2}>".format(
             self.job, self.rank, self.host)

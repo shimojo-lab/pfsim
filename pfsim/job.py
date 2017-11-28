@@ -56,7 +56,7 @@ class Job:
 
         self.started_at = self.simulator.time
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "<Job {0} np:{1} {2}>".format(self.name, self.n_procs,
                                              self.status.name)
 
