@@ -51,7 +51,7 @@ class TrafficMatrix:
         dok = {}
         n_procs = 0
 
-        with tarfile.open(path, "r:gz") as tar:
+        with tarfile.open(path, "r:*") as tar:
             for member in tar.getmembers():
                 if not member.isfile() or not member.name.endswith(".json"):
                     continue
