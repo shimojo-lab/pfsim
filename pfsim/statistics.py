@@ -58,11 +58,10 @@ class Samples:
         logger.info("Count:     {0}".format(self.count))
         logger.info("Variance:  {0}".format(self.variance))
 
-    def output_csv(self, path):
-        with open(path, "w", newline="") as f:
-            writer = csv.writer(f, lineterminator="\n")
-            writer.writerow(["Value"])
-            writer.writerows([v] for v in self.values)
+    def output_csv(self, f):
+        writer = csv.writer(f, lineterminator="\n")
+        writer.writerow(["Value"])
+        writer.writerows([v] for v in self.values)
 
 
 class TimeSeriesSamples(Samples):
@@ -109,8 +108,7 @@ class TimeSeriesSamples(Samples):
 
         return self._ts_m2 / self.current_time
 
-    def output_csv(self, path):
-        with open(path, "w", newline="") as f:
-            writer = csv.writer(f, lineterminator="\n")
-            writer.writerow(["Time", " Value"])
-            writer.writerows(zip(self.times, self.values))
+    def output_csv(self, f):
+        writer = csv.writer(f, lineterminator="\n")
+        writer.writerow(["Time", " Value"])
+        writer.writerows(zip(self.times, self.values))

@@ -19,7 +19,9 @@ class MetricsCollector:
     def output_csv(self, output_dir):
         for metric in self.metrics:
             path = Path(output_dir) / Path(metric.name).with_suffix(".csv")
-            metric.output_csv(str(path))
+
+            with open(path, "w", newline="") as f:
+                metric.output_csv(f)
 
 
 class SchedulerMetricsCollector(MetricsCollector):
