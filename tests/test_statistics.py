@@ -1,4 +1,5 @@
 from math import isclose, isnan
+from io import StringIO
 
 from pfsim.statistics import Samples, TimeSeriesSamples
 
@@ -49,6 +50,20 @@ class TestTimedSamples:
         assert self.samples.max == 2.0
         assert self.samples.min == 2.0
 
+    def test_write_csv(self):
+        self.samples.add(0.0, 1.0)
+        self.samples.add(1.0, 2.0)
+        self.samples.add(3.0, 3.0)
+        self.samples.add(6.0, 4.0)
+
+        f = StringIO()
+        self.samples.write_csv(f)
+
+        assert f.getvalue() == "Time,Value\n"\
+                               "0.0,1.0\n"\
+                               "1.0,2.0\n"\
+                               "3.0,3.0\n"
+
 
 class TestSamples:
     def setup(self):
@@ -78,3 +93,16 @@ class TestSamples:
         assert self.samples.count == 3
         assert self.samples.max == 3.0
         assert self.samples.min == 1.0
+
+    def test_write_csv(self):
+        self.samples.add(1.0)
+        self.samples.add(2.0)
+        self.samples.add(3.0)
+
+        f = StringIO()
+        self.samples.write_csv(f)
+
+        assert f.getvalue() == "Value\n"\
+                               "1.0\n"\
+                               "2.0\n"\
+                               "3.0\n"

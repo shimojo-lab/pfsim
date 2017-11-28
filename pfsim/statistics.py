@@ -110,5 +110,5 @@ class TimeSeriesSamples(Samples):
 
     def write_csv(self, f):
         writer = csv.writer(f, lineterminator="\n")
-        writer.writerow(["Time", " Value"])
+        writer.writerow(["Time", "Value"])
         writer.writerows(zip(self.times, self.values))
