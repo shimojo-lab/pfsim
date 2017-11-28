@@ -6,7 +6,6 @@ from os import makedirs
 from pathlib import Path
 from multiprocessing import Pool
 
-import sys
 import networkx as nx
 
 from schema import Or, Schema
@@ -139,9 +138,9 @@ class Scenario:
         return getattr(mod, cls_name)
 
 
-def wrapper(sched, hs, pm, rt):
-    experiment = Experiment(sys.argv[1])
-    experiment.parallel(sched, hs, pm, rt)
+def wrapper(path, conf):
+    scenario = Scenario(path, conf)
+    scenario.run()
 
 
 class Experiment:
@@ -150,16 +149,34 @@ class Experiment:
         with open(path) as f:
             self.conf = EXPERIMENT_CONF_SCHEMA.validate(yaml.load(f))
 
-    def parallel(self, sched, hs, pm, rt):
-        scenario_conf = deepcopy(self.conf)
-        algorithm_conf = scenario_conf["algorithms"]
-        algorithm_conf["scheduler"] = sched
-        algorithm_conf["host_selector"] = hs
-        algorithm_conf["process_mapper"] = pm
-        algorithm_conf["router"] = rt
+    def run_parallel(self, process):
+        algorithm_conf = self.conf["algorithms"]
+        schedulers = algorithm_conf["scheduler"]
+        host_selectors = algorithm_conf["host_selector"]
+        process_mappers = algorithm_conf["process_mapper"]
+        routers = algorithm_conf["router"]
 
-        scenario = Scenario(self.path, scenario_conf)
-        scenario.run()
+        algorithms = product(schedulers, host_selectors, process_mappers,
+                             routers)
+
+        with Pool(int(process[0])) as pool:
+            results = []
+            for (sched, hs, pm, rt) in algorithms:
+                scenario_conf = deepcopy(self.conf)
+                algorithm_conf = scenario_conf["algorithms"]
+                algorithm_conf["scheduler"] = sched
+                algorithm_conf["host_selector"] = hs
+                algorithm_conf["process_mapper"] = pm
+                algorithm_conf["router"] = rt
+
+                res = pool.apply_async(wrapper, (self.path, scenario_conf))
+                results.append(res)
+
+            pool.close()
+            pool.join()
+
+            for res in results:
+                res.get()
 
     def run(self):
         algorithm_conf = self.conf["algorithms"]
@@ -170,12 +187,14 @@ class Experiment:
 
         algorithms = product(schedulers, host_selectors, process_mappers,
                              routers)
-        pool = Pool(4)
-        results = []
+
         for (sched, hs, pm, rt) in algorithms:
-            res = pool.apply_async(wrapper, (sched, hs, pm, rt))
-            results.append(res)
-        pool.close()
-        pool.join()
-        for res in results:
-            res.get()
+            scenario_conf = deepcopy(self.conf)
+            algorithm_conf = scenario_conf["algorithms"]
+            algorithm_conf["scheduler"] = sched
+            algorithm_conf["host_selector"] = hs
+            algorithm_conf["process_mapper"] = pm
+            algorithm_conf["router"] = rt
+
+            scenario = Scenario(self.path, scenario_conf)
+            scenario.run()

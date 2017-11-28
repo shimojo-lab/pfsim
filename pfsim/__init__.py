@@ -1,11 +1,12 @@
 """
 Usage:
-  pfsim [-v | --verbose] <path/to/scenario>
+  pfsim [-v | --verbose] [-p | --parallel <process_number>] <path/to/scenario>
   pfsim (-h | --help)
 
 Options:
   -h --help     Show this help.
   -v --verbose  Enable verbose logging.
+  -p --parallel Decide parocess number.
      --version  Show version info.
 """
 
@@ -48,4 +49,7 @@ def main():
     configure_logging(verbose=args["--verbose"])
 
     experiment = Experiment(args["<path/to/scenario>"])
-    experiment.run()
+    if args["--parallel"] == []:
+        experiment.run()
+    elif args["--parallel"]:
+        experiment.run_parallel(args["--parallel"])
