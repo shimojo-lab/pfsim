@@ -18,6 +18,7 @@ class TestLinearHostSelector:
             self.hosts[i].allocated = True
 
         assert not self.selector.test(self.job1)
+        assert self.selector.select(self.job1) is None
 
     def test_select_single_block(self):
         assert self.selector.select(self.job1) == self.hosts[:4]
@@ -53,6 +54,13 @@ class TestRandomHostSelector:
         self.job2 = Job("j2", n_procs=24)
 
         self.selector = RandomHostSelector(hosts=self.hosts)
+
+    def test_reject_job(self):
+        for i in range(8):
+            self.hosts[i].allocated = True
+
+        assert not self.selector.test(self.job1)
+        assert self.selector.select(self.job1) is None
 
     def test_single_host(self):
         hosts = self.selector.select(self.job1)
