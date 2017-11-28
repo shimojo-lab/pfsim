@@ -25,6 +25,6 @@ class Host:
     def __hash__(self):
         return hash(self.name)
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "<Host {0} cap:{1} alloc:{2} job:{3}>".format(
             self.name, self.capacity, self.allocated, self.job)

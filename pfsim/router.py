@@ -52,7 +52,7 @@ class Router(ABC):
         self.cache = PathCache()
 
     @abstractmethod
-    def route(self, src, dst, job=None):
+    def route(self, src, dst, job=None):  # pragma: no cover
         pass
 
 

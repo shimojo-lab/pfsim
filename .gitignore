@@ -100,3 +100,4 @@ ENV/
 
 .direnv/
 output/
+cover/

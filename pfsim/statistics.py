@@ -50,7 +50,7 @@ class Samples:
 
         return self._m2 / (self.count - 1)
 
-    def report(self):
+    def report(self):  # pragma: no cover
         logger.info("{0:=^80}".format(" " + self.name + "  "))
         logger.info("Max:       {0}".format(self.max))
         logger.info("Min:       {0}".format(self.min))
@@ -110,5 +110,5 @@ class TimeSeriesSamples(Samples):
 
     def write_csv(self, f):
         writer = csv.writer(f, lineterminator="\n")
-        writer.writerow(["Time", " Value"])
+        writer.writerow(["Time", "Value"])
         writer.writerows(zip(self.times, self.values))

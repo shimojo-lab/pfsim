@@ -116,7 +116,7 @@ class Scenario:
 
         getLogger().removeHandler(self.file_handler)
 
-    def report(self):
+    def report(self):  # pragma: no cover
         logger.info("=" * 80)
         logger.info("Duration:                  {0}".format(
             self.conf["duration"]))

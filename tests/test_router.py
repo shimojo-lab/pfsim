@@ -31,6 +31,12 @@ class TestRandomRouter:
 
         assert path == ["h1", "s1", "h2"] or path == ["h1", "s2", "h2"]
 
+    def test_cache(self):
+        path1 = self.router.route(self.h1, self.h2)
+        path2 = self.router.route(self.h1, self.h2)
+
+        assert path1 == path2
+
 
 class TestDmodKRouter:
     def setup(self):
@@ -73,6 +79,12 @@ class TestDmodKRouter:
         path = self.router.route(self.h2, self.h3)
         assert path == ["h2", "s3", "s1", "s4", "h3"]
 
+    def test_cache(self):
+        path1 = self.router.route(self.h1, self.h2)
+        path2 = self.router.route(self.h1, self.h2)
+
+        assert path1 == path2
+
 
 class TestGreedyRouter2:
     def setup(self):
@@ -104,3 +116,9 @@ class TestGreedyRouter2:
     def test_inter_node(self):
         path = self.router.route(self.h1, self.h2)
         assert path == ["h1", "s1", "s3", "s4", "h2"]
+
+    def test_cache(self):
+        path1 = self.router.route(self.h1, self.h2)
+        path2 = self.router.route(self.h1, self.h2)
+
+        assert path1 == path2
