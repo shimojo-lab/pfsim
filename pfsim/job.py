@@ -62,7 +62,8 @@ class Job:
 
     @classmethod
     def from_trace(cls, path, duration=0.0, generator=None, simulator=None):
-        matrix = TrafficMatrix.load(path)
+        with open(path, "rb") as f:
+            matrix = TrafficMatrix.load(f)
         n_procs = matrix.n_procs
         name = "{0}-{1}".format(Path(path).name, cls._serial)
         cls._serial += 1
