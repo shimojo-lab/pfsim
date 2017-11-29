@@ -1,7 +1,7 @@
 import networkx as nx
 
 from pfsim.host import Host
-from pfsim.router import DmodKRouter, GreedyRouter2, RandomRouter
+from pfsim.router import DmodKRouter, GreedyRouter, GreedyRouter2, RandomRouter
 
 
 class TestRandomRouter:
@@ -86,7 +86,7 @@ class TestDmodKRouter:
         assert path1 == path2
 
 
-class TestGreedyRouter2:
+class TestGreedyRouter:
     def setup(self):
         self.graph = nx.DiGraph()
         self.graph.add_nodes_from(["h1", "h2"])
@@ -94,9 +94,9 @@ class TestGreedyRouter2:
 
         self.graph.add_edge("h1", "s1", traffic=0)
         self.graph.add_edge("s1", "s2", traffic=1)
-        self.graph.add_edge("s1", "s3", traffic=2)
-        self.graph.add_edge("s2", "s4", traffic=3)
-        self.graph.add_edge("s3", "s4", traffic=2)
+        self.graph.add_edge("s1", "s3", traffic=3)
+        self.graph.add_edge("s2", "s4", traffic=4)
+        self.graph.add_edge("s3", "s4", traffic=3)
         self.graph.add_edge("s4", "h2", traffic=0)
 
         self.graph.add_edge("s1", "h1", traffic=0)
@@ -116,6 +116,44 @@ class TestGreedyRouter2:
     def test_inter_node(self):
         path = self.router.route(self.h1, self.h2)
         assert path == ["h1", "s1", "s3", "s4", "h2"]
+
+    def test_cache(self):
+        path1 = self.router.route(self.h1, self.h2)
+        path2 = self.router.route(self.h1, self.h2)
+
+        assert path1 == path2
+
+
+class TestGreedyRouter2:
+    def setup(self):
+        self.graph = nx.DiGraph()
+        self.graph.add_nodes_from(["h1", "h2"])
+        self.graph.add_nodes_from(["s1", "s2", "s3", "s4"])
+
+        self.graph.add_edge("h1", "s1", traffic=0)
+        self.graph.add_edge("s1", "s2", traffic=1)
+        self.graph.add_edge("s1", "s3", traffic=3)
+        self.graph.add_edge("s2", "s4", traffic=4)
+        self.graph.add_edge("s3", "s4", traffic=3)
+        self.graph.add_edge("s4", "h2", traffic=0)
+
+        self.graph.add_edge("s1", "h1", traffic=0)
+        self.graph.add_edge("s2", "s1", traffic=0)
+        self.graph.add_edge("s3", "s1", traffic=0)
+        self.graph.add_edge("s4", "s2", traffic=0)
+        self.graph.add_edge("s4", "s3", traffic=0)
+        self.graph.add_edge("h2", "s4", traffic=0)
+
+        self.h1 = Host("h1", capacity=8)
+        self.h2 = Host("h2", capacity=8)
+
+        self.hosts = [self.h1, self.h2]
+
+        self.router = GreedyRouter(self.graph, hosts=self.hosts)
+
+    def test_inter_node(self):
+        path = self.router.route(self.h1, self.h2)
+        assert path == ["h1", "s1", "s2", "s4", "h2"]
 
     def test_cache(self):
         path1 = self.router.route(self.h1, self.h2)
