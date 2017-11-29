@@ -1,5 +1,6 @@
+from bisect import bisect_right
 from logging import getLogger
-from math import inf, nan, sqrt
+from math import inf, isnan, nan, sqrt
 
 import csv
 
@@ -37,6 +38,9 @@ class Samples:
 
     @property
     def cv(self):
+        if isnan(self.sd):
+            return nan
+
         return self.sd / self.mean
 
     @property
@@ -49,6 +53,9 @@ class Samples:
             return nan
 
         return self._m2 / (self.count - 1)
+
+    def __getitem__(self, idx):
+        return self.values[idx]
 
     def report(self):  # pragma: no cover
         logger.info("{0:=^80}".format(" " + self.name + "  "))
@@ -107,6 +114,9 @@ class TimeSeriesSamples(Samples):
             return nan
 
         return self._ts_m2 / self.current_time
+
+    def __getitem__(self, time):
+        return self.values[bisect_right(self.times, time) - 1]
 
     def write_csv(self, f):
         writer = csv.writer(f, lineterminator="\n")

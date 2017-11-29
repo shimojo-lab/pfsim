@@ -50,6 +50,16 @@ class TestTimedSamples:
         assert self.samples.max == 2.0
         assert self.samples.min == 2.0
 
+    def test_get_item(self):
+        self.samples.add(0.0, 1.0)
+        self.samples.add(1.0, 2.0)
+        self.samples.add(2.0, 3.0)
+
+        assert self.samples[0.0] == 1.0
+        assert self.samples[1.0] == 2.0
+        assert self.samples[0.5] == 1.0
+        assert self.samples[1.5] == 2.0
+
     def test_write_csv(self):
         self.samples.add(0.0, 1.0)
         self.samples.add(1.0, 2.0)
@@ -93,6 +103,15 @@ class TestSamples:
         assert self.samples.count == 3
         assert self.samples.max == 3.0
         assert self.samples.min == 1.0
+
+    def test_get_item(self):
+        self.samples.add(1.0)
+        self.samples.add(2.0)
+        self.samples.add(3.0)
+
+        assert self.samples[0] == 1.0
+        assert self.samples[1] == 2.0
+        assert self.samples[2] == 3.0
 
     def test_write_csv(self):
         self.samples.add(1.0)
