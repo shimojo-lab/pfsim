@@ -1,5 +1,5 @@
-from pfsim.simulator import Simulator
 from pfsim.job import Job
+from pfsim.simulator import Simulator
 
 
 class TestJob:

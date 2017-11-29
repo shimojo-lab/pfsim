@@ -1,7 +1,7 @@
-from io import BytesIO
 import json
-from math import isclose
 import tarfile
+from io import BytesIO
+from math import isclose
 
 from pfsim.traffic_matrix import TrafficMatrix
 

@@ -1,8 +1,8 @@
+import csv
 from bisect import bisect_right
 from logging import getLogger
 from math import inf, isnan, nan, sqrt
 
-import csv
 
 logger = getLogger(__name__)
 

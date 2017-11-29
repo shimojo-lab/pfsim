@@ -2,7 +2,7 @@ from itertools import groupby
 
 from pfsim.host import Host
 from pfsim.process import Process
-from pfsim.process_mapper import LinearProcessMapper, CyclicProcessMapper
+from pfsim.process_mapper import CyclicProcessMapper, LinearProcessMapper
 
 
 class TestProcessMapper:
