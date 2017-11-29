@@ -180,6 +180,9 @@ class Experiment:
         algorithms = product(schedulers, host_selectors, process_mappers,
                              routers)
 
+        lp = Thread(target=logger_thread, args=(q,))
+        lp.start()
+
         with Pool(process) as pool:
             results = []
             for (sched, hs, pm, rt) in algorithms:
@@ -199,8 +202,6 @@ class Experiment:
             for res in results:
                 res.get()
 
-        lp = Thread(target=logger_thread, args=(q,))
-        lp.start()
         q.put(None)
         lp.join()
 
