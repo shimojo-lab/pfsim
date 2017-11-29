@@ -12,7 +12,7 @@ class Event:
         self.time = time
         self.data = data
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "<Event {0} t:{1} data:{2}>".format(self.name, self.time,
                                                    self.data)
 

@@ -50,14 +50,14 @@ EXPERIMENT_CONF_SCHEMA = Schema({
 
 
 class Scenario:
-    def __init__(self, path, conf):
+    def __init__(self, base_path, conf):
         # Create simulator
         self.simulator = Simulator()
 
         # Create cluster
         algorithms_conf = conf["algorithms"]
         self.cluster = Cluster(
-            graph=nx.read_graphml(Path(path).parent / conf["topology"]),
+            graph=nx.read_graphml(base_path / conf["topology"]),
             host_selector=self._load_class(algorithms_conf["host_selector"]),
             process_mapper=self._load_class(algorithms_conf["process_mapper"]),
             scheduler=self._load_class(algorithms_conf["scheduler"]),
@@ -77,7 +77,7 @@ class Scenario:
             job_gen = JobGenerator(
                 submit=submit_dist(**job_submit_conf["params"]),
                 duration=duration_dist(**job_duration_conf["params"]),
-                trace=str(Path(path).parent / job_conf["trace"]),
+                trace=str(base_path / job_conf["trace"]),
                 hosts=self.cluster.hosts,
                 simulator=self.simulator
             )
@@ -91,7 +91,7 @@ class Scenario:
         ]
 
         # Create output directory and log handlers
-        self.output_path = Path(path).parent / \
+        self.output_path = base_path / \
             conf["output"] / \
             algorithms_conf["scheduler"].split(".")[-1] / \
             algorithms_conf["host_selector"].split(".")[-1] / \
@@ -115,11 +115,11 @@ class Scenario:
 
         for collector in self.collectors:
             collector.report()
-            collector.output_csv(self.output_path)
+            collector.write_csvs(self.output_path)
 
         getLogger().removeHandler(self.file_handler)
 
-    def report(self):
+    def report(self):  # pragma: no cover
         logger.info("=" * 80)
         logger.info("Duration:                  {0}".format(
             self.conf["duration"]))
@@ -206,6 +206,8 @@ class Experiment:
         lp.join()
 
     def run_serial(self):
+        base_path = Path(self.path).parent
+
         algorithm_conf = self.conf["algorithms"]
         schedulers = algorithm_conf["scheduler"]
         host_selectors = algorithm_conf["host_selector"]
@@ -223,5 +225,5 @@ class Experiment:
             algorithm_conf["process_mapper"] = pm
             algorithm_conf["router"] = rt
 
-            scenario = Scenario(self.path, scenario_conf)
+            scenario = Scenario(base_path, scenario_conf)
             scenario.run()

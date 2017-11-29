@@ -56,13 +56,14 @@ class Job:
 
         self.started_at = self.simulator.time
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "<Job {0} np:{1} {2}>".format(self.name, self.n_procs,
                                              self.status.name)
 
     @classmethod
     def from_trace(cls, path, duration=0.0, generator=None, simulator=None):
-        matrix = TrafficMatrix.load(path)
+        with open(path, "rb") as f:
+            matrix = TrafficMatrix.load(f)
         n_procs = matrix.n_procs
         name = "{0}-{1}".format(Path(path).name, cls._serial)
         cls._serial += 1

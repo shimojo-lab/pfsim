@@ -1,7 +1,9 @@
 import json
-from logging import getLogger
-import requests
 import sys
+from logging import getLogger
+
+import requests
+
 import yaml
 
 BASE_URL = "http://localhost:8080"

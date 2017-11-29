@@ -35,5 +35,5 @@ class Switch:
         # Datapath ID
         self.dpid = dpid
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "<Switch {0}>".format(self.name)

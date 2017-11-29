@@ -111,7 +111,7 @@ class Cluster:
     def submit_job(self, job, time=0.0):
         self.simulator.schedule("job.submitted", time, job=job)
 
-    def report(self):
+    def report(self):  # pragma: no cover
         logger.info("{0:=^80}".format(" " + self.graph.name + "  "))
         logger.info("Number of Hosts:           {0}".format(
             len(self.hosts)))
@@ -123,7 +123,7 @@ class Cluster:
             self.graph.size()))
         logger.info("=" * 80)
 
-    def write_flowtable(self, path):
+    def write_flowtable(self, f):
         output = {}
 
         graph = nx.Graph(self.graph)
@@ -149,5 +149,4 @@ class Cluster:
                 diff.neighbors_iter(switch.name)
             ]
 
-        with open(path, "w") as f:
-            yaml.dump(output, f, explicit_start=True, default_flow_style=False)
+        yaml.dump(output, f, explicit_start=True, default_flow_style=False)

@@ -1,7 +1,8 @@
-from logging import getLogger
-from math import inf, nan, sqrt
-
 import csv
+from bisect import bisect_right
+from logging import getLogger
+from math import inf, isnan, nan, sqrt
+
 
 logger = getLogger(__name__)
 
@@ -37,6 +38,9 @@ class Samples:
 
     @property
     def cv(self):
+        if isnan(self.sd):
+            return nan
+
         return self.sd / self.mean
 
     @property
@@ -50,7 +54,10 @@ class Samples:
 
         return self._m2 / (self.count - 1)
 
-    def report(self):
+    def __getitem__(self, idx):
+        return self.values[idx]
+
+    def report(self):  # pragma: no cover
         logger.info("{0:=^80}".format(" " + self.name + "  "))
         logger.info("Max:       {0}".format(self.max))
         logger.info("Min:       {0}".format(self.min))
@@ -58,11 +65,10 @@ class Samples:
         logger.info("Count:     {0}".format(self.count))
         logger.info("Variance:  {0}".format(self.variance))
 
-    def output_csv(self, path):
-        with open(path, "w", newline="") as f:
-            writer = csv.writer(f, lineterminator="\n")
-            writer.writerow(["Value"])
-            writer.writerows([v] for v in self.values)
+    def write_csv(self, f):
+        writer = csv.writer(f, lineterminator="\n")
+        writer.writerow(["Value"])
+        writer.writerows([v] for v in self.values)
 
 
 class TimeSeriesSamples(Samples):
@@ -109,8 +115,10 @@ class TimeSeriesSamples(Samples):
 
         return self._ts_m2 / self.current_time
 
-    def output_csv(self, path):
-        with open(path, "w", newline="") as f:
-            writer = csv.writer(f, lineterminator="\n")
-            writer.writerow(["Time", " Value"])
-            writer.writerows(zip(self.times, self.values))
+    def __getitem__(self, time):
+        return self.values[bisect_right(self.times, time) - 1]
+
+    def write_csv(self, f):
+        writer = csv.writer(f, lineterminator="\n")
+        writer.writerow(["Time", "Value"])
+        writer.writerows(zip(self.times, self.values))

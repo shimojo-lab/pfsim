@@ -52,7 +52,7 @@ class Router(ABC):
         self.cache = PathCache()
 
     @abstractmethod
-    def route(self, src, dst, job=None):
+    def route(self, src, dst, job=None):  # pragma: no cover
         pass
 
 
@@ -139,7 +139,6 @@ class GreedyRouter2(Router):
             return self.cache.get(src, dst)
 
         paths = list(nx.all_shortest_paths(self.graph, src.name, dst.name))
-        min_cost = inf
         min_path = paths[0]
         min_cost = inf
 

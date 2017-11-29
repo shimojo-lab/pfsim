@@ -21,7 +21,7 @@ class TrafficMatrix:
         return g
 
     def __len__(self):
-        return len(self.coo)
+        return len(self.dok)
 
     @property
     def density(self):
@@ -43,15 +43,12 @@ class TrafficMatrix:
             dok[(src, dst)] = trace["tx_bytes"][dst]
 
     @classmethod
-    def load(cls, path):
-        if path in cls._cache:
-            return cls._cache[path]
-
+    def _load(cls, f):
         # c.f. https://www.wikiwand.com/en/Sparse_matrix
         dok = {}
         n_procs = 0
 
-        with tarfile.open(path, "r:gz") as tar:
+        with tarfile.open(fileobj=f, mode="r:*") as tar:
             for member in tar.getmembers():
                 if not member.isfile() or not member.name.endswith(".json"):
                     continue
@@ -60,8 +57,16 @@ class TrafficMatrix:
                     cls._load_single_file(f, dok)
                     n_procs += 1
 
-        matrix = cls(n_procs, dok)
+        return cls(n_procs, dok)
 
-        cls._cache[path] = matrix
+    @classmethod
+    def load(cls, f):
+        if hasattr(f, "name") and f.name in cls._cache:
+            return cls._cache[f.name]
+
+        matrix = cls._load(f)
+
+        if hasattr(f, "name"):
+            cls._cache[f.name] = matrix
 
         return matrix
