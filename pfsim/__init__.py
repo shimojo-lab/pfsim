@@ -9,8 +9,9 @@ Options:
      --version  Show version info.
 """
 
-from docopt import docopt
 import logging.config
+
+from docopt import docopt
 
 from .experiment import Experiment
 

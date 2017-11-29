@@ -1,5 +1,5 @@
-from pfsim.process import Process
 from pfsim.job import Job
+from pfsim.process import Process
 
 
 class TestProcess:
