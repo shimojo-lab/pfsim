@@ -1,6 +1,6 @@
 from bisect import bisect_right
 from logging import getLogger
-from math import inf, nan, sqrt
+from math import inf, isnan, nan, sqrt
 
 import csv
 
@@ -38,6 +38,9 @@ class Samples:
 
     @property
     def cv(self):
+        if isnan(self.sd):
+            return nan
+
         return self.sd / self.mean
 
     @property

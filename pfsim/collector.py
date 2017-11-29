@@ -12,7 +12,7 @@ class MetricsCollector:
         self.simulator = simulator
         self.cluster = cluster
 
-    def report(self):
+    def report(self):  # pragma: no cover
         for metric in self.metrics:
             metric.report()
 
@@ -80,6 +80,7 @@ class InterconnectMetricsCollector(MetricsCollector):
         ]
 
         simulator.register("job.started", self._collect, prio=-inf)
+        simulator.register("job.finished", self._collect, prio=-inf)
 
     def _collect(self, **kwargs):
         time = self.simulator.time
