@@ -1,5 +1,6 @@
 from io import StringIO
 from math import isclose, isnan
+from io import StringIO
 
 from pfsim.statistics import Samples, TimeSeriesSamples
 

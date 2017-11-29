@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 from pfsim.job import Job
 from pfsim.simulator import Simulator
+=======
+from pfsim.simulator import Simulator
+from pfsim.job import Job
+>>>>>>> Output the log one by one
 
 
 class TestJob:
