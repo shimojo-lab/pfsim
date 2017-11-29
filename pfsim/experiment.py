@@ -2,9 +2,11 @@ from copy import deepcopy
 from importlib import import_module
 from itertools import product
 from logging import FileHandler, getLogger
+import logging.handlers
 from os import makedirs
 from pathlib import Path
-from multiprocessing import Pool
+from multiprocessing import Pool, Manager
+from threading import Thread
 
 import networkx as nx
 
@@ -138,9 +140,25 @@ class Scenario:
         return getattr(mod, cls_name)
 
 
-def run_scenario(path, conf):
+def run_scenario(path, conf, q):
+    q_handler = logging.handlers.QueueHandler(q)
+    logger = getLogger()
+    logger.handlers = []
+    logger.addHandler(q_handler)
+
     scenario = Scenario(path, conf)
     scenario.run()
+
+    logger.removeHandler(q_handler)
+
+
+def logger_thread(q):
+    while True:
+        record = q.get()
+        if record is None:
+            break
+        logger = getLogger(record.name)
+        logger.handle(record)
 
 
 class Experiment:
@@ -150,6 +168,9 @@ class Experiment:
             self.conf = EXPERIMENT_CONF_SCHEMA.validate(yaml.load(f))
 
     def run_parallel(self, process):
+        m = Manager()
+        q = m.Queue()
+
         algorithm_conf = self.conf["algorithms"]
         schedulers = algorithm_conf["scheduler"]
         host_selectors = algorithm_conf["host_selector"]
@@ -170,14 +191,18 @@ class Experiment:
                 algorithm_conf["router"] = rt
 
                 res = pool.apply_async(run_scenario, (self.path,
-                                                      scenario_conf))
+                                                      scenario_conf, q))
                 results.append(res)
-
             pool.close()
             pool.join()
 
             for res in results:
                 res.get()
+
+        lp = Thread(target=logger_thread, args=(q,))
+        lp.start()
+        q.put(None)
+        lp.join()
 
     def run_serial(self):
         algorithm_conf = self.conf["algorithms"]
