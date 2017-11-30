@@ -1,6 +1,6 @@
 """
 Usage:
-  pfsim [-v | --verbose] [-p | --parallel <process_number>] <path/to/scenario>
+  pfsim [-v | --verbose] [-p | --parallel <num_procs>] <path/to/scenario>
   pfsim (-h | --help)
 
 Options:
