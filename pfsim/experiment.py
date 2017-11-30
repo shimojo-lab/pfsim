@@ -10,6 +10,8 @@ from threading import Thread
 
 import networkx as nx
 
+from prettytable import PrettyTable
+
 from schema import Or, Schema
 
 import yaml
@@ -120,18 +122,22 @@ class Scenario:
         getLogger().removeHandler(self.file_handler)
 
     def report(self):  # pragma: no cover
-        logger.info("=" * 80)
-        logger.info("Duration:                  {0}".format(
-            self.conf["duration"]))
-        logger.info("Cluster Topology:          {0}".format(
-            self.conf["topology"]))
-        logger.info("Host Selection Algorithm:  {0}".format(
-            self.conf["algorithms"]["host_selector"]))
-        logger.info("Process Mapping Algorithm: {0}".format(
-            self.conf["algorithms"]["process_mapper"]))
-        logger.info("Routing Algorithm:         {0}".format(
-            self.conf["algorithms"]["router"]))
-        logger.info("=" * 80)
+        table = PrettyTable()
+        table.field_names = ["Item", "Value"]
+        table.align = "l"
+
+        table.add_row(["Duration", self.conf["duration"]])
+        table.add_row(["Cluster Topology", self.conf["topology"]])
+        table.add_row(["Host Section Algorithm",
+                       self.conf["algorithms"]["host_selector"]])
+        table.add_row(["Process Mapping ALgorith",
+                       self.conf["algorithms"]["process_mapper"]])
+        table.add_row(["Routing Algorithm",
+                       self.conf["algorithms"]["router"]])
+
+        print("")
+        print("Simulation Scenario")
+        print(table)
 
     def _load_class(self, path):
         mod_name, cls_name = path.rsplit(".", 1)

@@ -3,6 +3,8 @@ from logging import getLogger
 
 import networkx as nx
 
+from prettytable import PrettyTable
+
 import yaml
 
 from .host import Host
@@ -112,16 +114,20 @@ class Cluster:
         self.simulator.schedule("job.submitted", time, job=job)
 
     def report(self):  # pragma: no cover
-        logger.info("{0:=^80}".format(" " + self.graph.name + "  "))
-        logger.info("Number of Hosts:           {0}".format(
-            len(self.hosts)))
-        logger.info("Number of Allocated Hosts: {0}".format(
-            len([h for h in self.hosts.values() if h.allocated])))
-        logger.info("Number of Switches:        {0}".format(
-            len(self.switches)))
-        logger.info("Number of Links:           {0}".format(
-            self.graph.size()))
-        logger.info("=" * 80)
+        table = PrettyTable()
+        table.field_names = ["Item", "Value"]
+        table.align = "l"
+
+        table.add_row(["Name", self.graph.name])
+        table.add_row(["Number of Hosts", len(self.hosts)])
+        table.add_row(["Number of Allocated Hosts",
+                       len([h for h in self.hosts.values() if h.allocated])])
+        table.add_row(["Number of Switches", len(self.switches)])
+        table.add_row(["Number of Links", self.graph.size()])
+
+        print("")
+        print("Cluster Status")
+        print(table)
 
     def write_flowtable(self, f):
         output = {}
