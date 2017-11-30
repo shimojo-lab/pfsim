@@ -1,11 +1,11 @@
+import logging.handlers
 from copy import deepcopy
 from importlib import import_module
 from itertools import product
 from logging import FileHandler, getLogger
-import logging.handlers
+from multiprocessing import Manager, Pool
 from os import makedirs
 from pathlib import Path
-from multiprocessing import Pool, Manager
 from threading import Thread
 
 import networkx as nx
