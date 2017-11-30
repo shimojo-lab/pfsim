@@ -51,7 +51,7 @@ def main():
 
     experiment = Experiment(args["<path/to/scenario>"])
     if args["--parallel"]:
-        process = args["--parallel"][0]
-        experiment.run_parallel(int(process))
+        num_procs = int(args["--parallel"][0])
+        experiment.run_parallel(num_procs)
     else:
         experiment.run_serial()

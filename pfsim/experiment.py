@@ -141,14 +141,8 @@ class Scenario:
 
 
 def _run_scenario(path, conf):
-    logger = getLogger()
-    logger.handlers = []
-    logger.addHandler(q_handler)
-
     scenario = Scenario(path, conf)
     scenario.run()
-
-    logger.removeHandler(q_handler)
 
 
 def _logger_thread(queue):
@@ -163,6 +157,9 @@ def _logger_thread(queue):
 def _set_q_handler(queue):
     global q_handler
     q_handler = QueueHandler(queue)
+    logger = getLogger()
+    logger.handlers = []
+    logger.addHandler(q_handler)
 
 
 class Experiment:
@@ -175,7 +172,7 @@ class Experiment:
         base_path = Path(self.path).parent
 
         manager = Manager()
-        master_q = manager.Queue()
+        log_q = manager.Queue()
 
         algorithm_conf = self.conf["algorithms"]
         schedulers = algorithm_conf["scheduler"]
@@ -186,10 +183,10 @@ class Experiment:
         algorithms = product(schedulers, host_selectors, process_mappers,
                              routers)
 
-        thread = Thread(target=_logger_thread, args=(master_q,))
+        thread = Thread(target=_logger_thread, args=(log_q,))
         thread.start()
 
-        with Pool(degree_parallelism, _set_q_handler, [master_q]) as pool:
+        with Pool(degree_parallelism, _set_q_handler, (log_q,)) as pool:
             results = []
             for (sched, hs, pm, rt) in algorithms:
                 scenario_conf = deepcopy(self.conf)
@@ -208,7 +205,7 @@ class Experiment:
             for res in results:
                 res.get()
 
-        master_q.put(None)
+        log_q.put(None)
         thread.join()
 
     def run_serial(self):
@@ -231,5 +228,4 @@ class Experiment:
             algorithm_conf["process_mapper"] = pm
             algorithm_conf["router"] = rt
 
-            scenario = Scenario(base_path, scenario_conf)
-            scenario.run()
+            _run_scenario(base_path, scenario_conf)
