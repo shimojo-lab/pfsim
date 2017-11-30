@@ -1,8 +1,8 @@
-import logging.handlers
 from copy import deepcopy
 from importlib import import_module
 from itertools import product
 from logging import FileHandler, getLogger
+from logging.handlers import QueueHandler
 from multiprocessing import Manager, Pool
 from os import makedirs
 from pathlib import Path
@@ -140,8 +140,8 @@ class Scenario:
         return getattr(mod, cls_name)
 
 
-def run_scenario(path, conf, q):
-    q_handler = logging.handlers.QueueHandler(q)
+def run_scenario(path, conf, queue):
+    q_handler = QueueHandler(queue)
     logger = getLogger()
     logger.handlers = []
     logger.addHandler(q_handler)
