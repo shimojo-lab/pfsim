@@ -152,9 +152,9 @@ def run_scenario(path, conf, queue):
     logger.removeHandler(q_handler)
 
 
-def logger_thread(q):
+def _logger_thread(queue):
     while True:
-        record = q.get()
+        record = queue.get()
         if record is None:
             break
         logger = getLogger(record.name)
@@ -167,9 +167,9 @@ class Experiment:
         with open(path) as f:
             self.conf = EXPERIMENT_CONF_SCHEMA.validate(yaml.load(f))
 
-    def run_parallel(self, process):
-        m = Manager()
-        q = m.Queue()
+    def run_parallel(self, degree_parallelism):
+        manager = Manager()
+        master_q = manager.Queue()
 
         algorithm_conf = self.conf["algorithms"]
         schedulers = algorithm_conf["scheduler"]
@@ -180,10 +180,10 @@ class Experiment:
         algorithms = product(schedulers, host_selectors, process_mappers,
                              routers)
 
-        lp = Thread(target=logger_thread, args=(q,))
-        lp.start()
+        thread = Thread(target=_logger_thread, args=(master_q,))
+        thread.start()
 
-        with Pool(process) as pool:
+        with Pool(degree_parallelism) as pool:
             results = []
             for (sched, hs, pm, rt) in algorithms:
                 scenario_conf = deepcopy(self.conf)
@@ -194,7 +194,8 @@ class Experiment:
                 algorithm_conf["router"] = rt
 
                 res = pool.apply_async(run_scenario, (self.path,
-                                                      scenario_conf, q))
+                                                      scenario_conf,
+                                                      master_q))
                 results.append(res)
             pool.close()
             pool.join()
@@ -202,8 +203,8 @@ class Experiment:
             for res in results:
                 res.get()
 
-        q.put(None)
-        lp.join()
+        master_q.put(None)
+        thread.join()
 
     def run_serial(self):
         base_path = Path(self.path).parent
