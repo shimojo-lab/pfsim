@@ -140,8 +140,7 @@ class Scenario:
         return getattr(mod, cls_name)
 
 
-def _run_scenario(path, conf, queue):
-    q_handler = QueueHandler(queue)
+def _run_scenario(path, conf):
     logger = getLogger()
     logger.handlers = []
     logger.addHandler(q_handler)
@@ -161,6 +160,11 @@ def _logger_thread(queue):
         logger.handle(record)
 
 
+def _set_q_handler(queue):
+    global q_handler
+    q_handler = QueueHandler(queue)
+
+
 class Experiment:
     def __init__(self, path):
         self.path = path
@@ -168,6 +172,8 @@ class Experiment:
             self.conf = EXPERIMENT_CONF_SCHEMA.validate(yaml.load(f))
 
     def run_parallel(self, degree_parallelism):
+        base_path = Path(self.path).parent
+
         manager = Manager()
         master_q = manager.Queue()
 
@@ -183,7 +189,7 @@ class Experiment:
         thread = Thread(target=_logger_thread, args=(master_q,))
         thread.start()
 
-        with Pool(degree_parallelism) as pool:
+        with Pool(degree_parallelism, _set_q_handler, [master_q]) as pool:
             results = []
             for (sched, hs, pm, rt) in algorithms:
                 scenario_conf = deepcopy(self.conf)
@@ -193,9 +199,8 @@ class Experiment:
                 algorithm_conf["process_mapper"] = pm
                 algorithm_conf["router"] = rt
 
-                res = pool.apply_async(_run_scenario, (self.path,
-                                                       scenario_conf,
-                                                       master_q))
+                res = pool.apply_async(_run_scenario, (base_path,
+                                                       scenario_conf))
                 results.append(res)
             pool.close()
             pool.join()
