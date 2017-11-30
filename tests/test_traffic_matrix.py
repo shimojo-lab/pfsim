@@ -1,14 +1,7 @@
-<<<<<<< HEAD
 import json
 import tarfile
 from io import BytesIO
 from math import isclose
-=======
-from io import BytesIO
-import json
-from math import isclose
-import tarfile
->>>>>>> Output the log one by one
 
 from pfsim.traffic_matrix import TrafficMatrix
 

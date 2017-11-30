@@ -140,7 +140,7 @@ class Scenario:
         return getattr(mod, cls_name)
 
 
-def run_scenario(path, conf, queue):
+def _run_scenario(path, conf, queue):
     q_handler = QueueHandler(queue)
     logger = getLogger()
     logger.handlers = []
@@ -193,9 +193,9 @@ class Experiment:
                 algorithm_conf["process_mapper"] = pm
                 algorithm_conf["router"] = rt
 
-                res = pool.apply_async(run_scenario, (self.path,
-                                                      scenario_conf,
-                                                      master_q))
+                res = pool.apply_async(_run_scenario, (self.path,
+                                                       scenario_conf,
+                                                       master_q))
                 results.append(res)
             pool.close()
             pool.join()

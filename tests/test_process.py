@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 from pfsim.job import Job
 from pfsim.process import Process
-=======
-from pfsim.process import Process
-from pfsim.job import Job
->>>>>>> Output the log one by one
 
 
 class TestProcess:
