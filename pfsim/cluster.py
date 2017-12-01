@@ -113,7 +113,7 @@ class Cluster:
     def submit_job(self, job, time=0.0):
         self.simulator.schedule("job.submitted", time, job=job)
 
-    def report(self):  # pragma: no cover
+    def report(self, f):  # pragma: no cover
         table = PrettyTable()
         table.field_names = ["Item", "Value"]
         table.align = "l"
@@ -125,9 +125,9 @@ class Cluster:
         table.add_row(["Number of Switches", len(self.switches)])
         table.add_row(["Number of Links", self.graph.size()])
 
-        print("")
-        print("Cluster Status")
-        print(table)
+        f.write("Cluster Status\n")
+        f.write(str(table))
+        f.write("\n")
 
     def write_flowtable(self, f):
         output = {}

@@ -12,9 +12,9 @@ class MetricsCollector:
         self.simulator = simulator
         self.cluster = cluster
 
-    def report(self):  # pragma: no cover
+    def report(self, f):  # pragma: no cover
         for metric in self.metrics:
-            metric.report()
+            metric.report(f)
 
     def write_csvs(self, output_dir):
         for metric in self.metrics:

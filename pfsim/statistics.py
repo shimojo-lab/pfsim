@@ -52,7 +52,7 @@ class Samples:
     def __getitem__(self, idx):
         return self.values[idx]
 
-    def report(self):  # pragma: no cover
+    def report(self, f):  # pragma: no cover
         table = PrettyTable()
         table.field_names = ["Item", "Value"]
         table.align = "l"
@@ -63,9 +63,9 @@ class Samples:
         table.add_row(["Count", self.count])
         table.add_row(["Variance", self.variance])
 
-        print("")
-        print(self.name)
-        print(table)
+        f.write(self.name + "\n")
+        f.write(str(table))
+        f.write("\n")
 
     def write_csv(self, f):
         writer = csv.writer(f, lineterminator="\n")

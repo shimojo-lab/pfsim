@@ -1,7 +1,7 @@
 from copy import deepcopy
 from importlib import import_module
 from itertools import product
-from logging import FileHandler, getLogger
+from logging import getLogger
 from logging.handlers import QueueHandler
 from multiprocessing import Manager, Pool
 from os import makedirs
@@ -100,28 +100,25 @@ class Scenario:
             algorithms_conf["process_mapper"].split(".")[-1] / \
             algorithms_conf["router"].split(".")[-1]
         makedirs(self.output_path, exist_ok=True)
-        log_path = Path(self.output_path) / "result.log"
-        self.file_handler = FileHandler(str(log_path))
 
         self.conf = conf
 
     def run(self):
-        getLogger().addHandler(self.file_handler)
+        result_path = (Path(self.output_path) / "result.txt")
 
-        # Print simulator configurations
-        self.report()
-        # Print cluster configuration
-        self.cluster.report()
+        with open(result_path, "w") as f:
+            # Print simulator configurations
+            self.report(f)
+            # Print cluster configuration
+            self.cluster.report(f)
 
-        self.simulator.run_until(self.conf["duration"])
+            self.simulator.run_until(self.conf["duration"])
 
-        for collector in self.collectors:
-            collector.report()
-            collector.write_csvs(self.output_path)
+            for collector in self.collectors:
+                collector.report(f)
+                collector.write_csvs(self.output_path)
 
-        getLogger().removeHandler(self.file_handler)
-
-    def report(self):  # pragma: no cover
+    def report(self, f):  # pragma: no cover
         table = PrettyTable()
         table.field_names = ["Item", "Value"]
         table.align = "l"
@@ -135,9 +132,9 @@ class Scenario:
         table.add_row(["Routing Algorithm",
                        self.conf["algorithms"]["router"]])
 
-        print("")
-        print("Simulation Scenario")
-        print(table)
+        f.write("Simulation Scenario\n")
+        f.write(str(table))
+        f.write("\n")
 
     def _load_class(self, path):
         mod_name, cls_name = path.rsplit(".", 1)
