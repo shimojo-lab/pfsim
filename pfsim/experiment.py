@@ -2,8 +2,11 @@ from copy import deepcopy
 from importlib import import_module
 from itertools import product
 from logging import FileHandler, getLogger
+from logging.handlers import QueueHandler
+from multiprocessing import Manager, Pool
 from os import makedirs
 from pathlib import Path
+from threading import Thread
 
 import networkx as nx
 
@@ -137,13 +140,74 @@ class Scenario:
         return getattr(mod, cls_name)
 
 
+def _run_scenario(path, conf):
+    scenario = Scenario(path, conf)
+    scenario.run()
+
+
+def _logger_thread(queue):
+    while True:
+        record = queue.get()
+        if record is None:
+            break
+        logger = getLogger(record.name)
+        logger.handle(record)
+
+
+def _set_q_handler(queue):
+    q_handler = QueueHandler(queue)
+    logger = getLogger()
+    logger.handlers = []
+    logger.addHandler(q_handler)
+
+
 class Experiment:
     def __init__(self, path):
         self.path = path
         with open(path) as f:
             self.conf = EXPERIMENT_CONF_SCHEMA.validate(yaml.load(f))
 
-    def run(self):
+    def run_parallel(self, degree_parallelism):
+        base_path = Path(self.path).parent
+
+        manager = Manager()
+        log_q = manager.Queue()
+
+        algorithm_conf = self.conf["algorithms"]
+        schedulers = algorithm_conf["scheduler"]
+        host_selectors = algorithm_conf["host_selector"]
+        process_mappers = algorithm_conf["process_mapper"]
+        routers = algorithm_conf["router"]
+
+        algorithms = product(schedulers, host_selectors, process_mappers,
+                             routers)
+
+        thread = Thread(target=_logger_thread, args=(log_q,))
+        thread.start()
+
+        with Pool(degree_parallelism, _set_q_handler, (log_q,)) as pool:
+            results = []
+            for (sched, hs, pm, rt) in algorithms:
+                scenario_conf = deepcopy(self.conf)
+                algorithm_conf = scenario_conf["algorithms"]
+                algorithm_conf["scheduler"] = sched
+                algorithm_conf["host_selector"] = hs
+                algorithm_conf["process_mapper"] = pm
+                algorithm_conf["router"] = rt
+
+                res = pool.apply_async(_run_scenario, (base_path,
+                                                       scenario_conf))
+                results.append(res)
+            pool.close()
+            pool.join()
+
+            for res in results:
+                res.get()
+
+        log_q.put(None)
+        thread.join()
+
+    def run_serial(self):
         base_path = Path(self.path).parent
 
         algorithm_conf = self.conf["algorithms"]
@@ -163,5 +227,4 @@ class Experiment:
             algorithm_conf["process_mapper"] = pm
             algorithm_conf["router"] = rt
 
-            scenario = Scenario(base_path, scenario_conf)
-            scenario.run()
+            _run_scenario(base_path, scenario_conf)
