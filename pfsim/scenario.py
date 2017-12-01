@@ -1,7 +1,6 @@
 from importlib import import_module
 from logging import getLogger
-from logging.handlers import QueueHandler
-from os import getpid, makedirs
+from os import makedirs
 from pathlib import Path
 
 import networkx as nx
@@ -106,30 +105,3 @@ class Scenario:
         mod = import_module(mod_name)
 
         return getattr(mod, cls_name)
-
-
-def _run_scenario(path, conf):
-    logger.info("Starting simulation at worker (PID %d)", getpid())
-
-    scenario = Scenario(path, conf)
-    scenario.run()
-
-    logger.info("Finished simulation at worker (PID %d)", getpid())
-
-
-def _logger_thread(queue):
-    while True:
-        record = queue.get()
-        if record is None:
-            break
-        logger = getLogger(record.name)
-        logger.handle(record)
-
-
-def _set_q_handler(queue):
-    q_handler = QueueHandler(queue)
-    root_logger = getLogger()
-    root_logger.handlers = []
-    root_logger.addHandler(q_handler)
-
-    logger.info("Starting worker proces at PID %d", getpid())
