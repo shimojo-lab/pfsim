@@ -1,14 +1,16 @@
 from copy import deepcopy
 from importlib import import_module
 from itertools import product
-from logging import FileHandler, getLogger
+from logging import getLogger
 from logging.handlers import QueueHandler
 from multiprocessing import Manager, Pool
-from os import makedirs
+from os import getpid, makedirs
 from pathlib import Path
 from threading import Thread
 
 import networkx as nx
+
+from prettytable import PrettyTable
 
 from schema import Or, Schema
 
@@ -98,40 +100,41 @@ class Scenario:
             algorithms_conf["process_mapper"].split(".")[-1] / \
             algorithms_conf["router"].split(".")[-1]
         makedirs(self.output_path, exist_ok=True)
-        log_path = Path(self.output_path) / "result.log"
-        self.file_handler = FileHandler(str(log_path))
 
         self.conf = conf
 
     def run(self):
-        getLogger().addHandler(self.file_handler)
+        result_path = (Path(self.output_path) / "result.txt")
 
-        # Print simulator configurations
-        self.report()
-        # Print cluster configuration
-        self.cluster.report()
+        with open(result_path, "w") as f:
+            # Print simulator configurations
+            self.report(f)
+            # Print cluster configuration
+            self.cluster.report(f)
 
-        self.simulator.run_until(self.conf["duration"])
+            self.simulator.run_until(self.conf["duration"])
 
-        for collector in self.collectors:
-            collector.report()
-            collector.write_csvs(self.output_path)
+            for collector in self.collectors:
+                collector.report(f)
+                collector.write_csvs(self.output_path)
 
-        getLogger().removeHandler(self.file_handler)
+    def report(self, f):  # pragma: no cover
+        table = PrettyTable()
+        table.field_names = ["Item", "Value"]
+        table.align = "l"
 
-    def report(self):  # pragma: no cover
-        logger.info("=" * 80)
-        logger.info("Duration:                  {0}".format(
-            self.conf["duration"]))
-        logger.info("Cluster Topology:          {0}".format(
-            self.conf["topology"]))
-        logger.info("Host Selection Algorithm:  {0}".format(
-            self.conf["algorithms"]["host_selector"]))
-        logger.info("Process Mapping Algorithm: {0}".format(
-            self.conf["algorithms"]["process_mapper"]))
-        logger.info("Routing Algorithm:         {0}".format(
-            self.conf["algorithms"]["router"]))
-        logger.info("=" * 80)
+        table.add_row(["Duration", self.conf["duration"]])
+        table.add_row(["Cluster Topology", self.conf["topology"]])
+        table.add_row(["Host Section Algorithm",
+                       self.conf["algorithms"]["host_selector"]])
+        table.add_row(["Process Mapping ALgorith",
+                       self.conf["algorithms"]["process_mapper"]])
+        table.add_row(["Routing Algorithm",
+                       self.conf["algorithms"]["router"]])
+
+        f.write("Simulation Scenario\n")
+        f.write(str(table))
+        f.write("\n")
 
     def _load_class(self, path):
         mod_name, cls_name = path.rsplit(".", 1)
@@ -141,8 +144,12 @@ class Scenario:
 
 
 def _run_scenario(path, conf):
+    logger.info("Starting simulation at worker (PID %d)", getpid())
+
     scenario = Scenario(path, conf)
     scenario.run()
+
+    logger.info("Finished simulation at worker (PID %d)", getpid())
 
 
 def _logger_thread(queue):
@@ -156,9 +163,11 @@ def _logger_thread(queue):
 
 def _set_q_handler(queue):
     q_handler = QueueHandler(queue)
-    logger = getLogger()
-    logger.handlers = []
-    logger.addHandler(q_handler)
+    root_logger = getLogger()
+    root_logger.handlers = []
+    root_logger.addHandler(q_handler)
+
+    logger.info("Starting worker proces at PID %d", getpid())
 
 
 class Experiment:
@@ -169,6 +178,9 @@ class Experiment:
 
     def run_parallel(self, degree_parallelism):
         base_path = Path(self.path).parent
+        logger.info("Starting simulation in parallel mode "
+                    "(%d worker processes)", degree_parallelism)
+        logger.info("Using scenario file %s", Path(self.path).resolve())
 
         manager = Manager()
         log_q = manager.Queue()
@@ -209,6 +221,8 @@ class Experiment:
 
     def run_serial(self):
         base_path = Path(self.path).parent
+        logger.info("Starting simulation in serial mode")
+        logger.info("Using scenario file %s", Path(self.path).resolve())
 
         algorithm_conf = self.conf["algorithms"]
         schedulers = algorithm_conf["scheduler"]

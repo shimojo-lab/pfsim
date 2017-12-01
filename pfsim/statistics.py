@@ -3,6 +3,8 @@ from bisect import bisect_right
 from logging import getLogger
 from math import inf, nan, sqrt
 
+from prettytable import PrettyTable
+
 
 logger = getLogger(__name__)
 
@@ -50,13 +52,20 @@ class Samples:
     def __getitem__(self, idx):
         return self.values[idx]
 
-    def report(self):  # pragma: no cover
-        logger.info("{0:=^80}".format(" " + self.name + "  "))
-        logger.info("Max:       {0}".format(self.max))
-        logger.info("Min:       {0}".format(self.min))
-        logger.info("Mean:      {0}".format(self.mean))
-        logger.info("Count:     {0}".format(self.count))
-        logger.info("Variance:  {0}".format(self.variance))
+    def report(self, f):  # pragma: no cover
+        table = PrettyTable()
+        table.field_names = ["Item", "Value"]
+        table.align = "l"
+
+        table.add_row(["Max", self.max])
+        table.add_row(["Min", self.min])
+        table.add_row(["Mean", self.mean])
+        table.add_row(["Count", self.count])
+        table.add_row(["Variance", self.variance])
+
+        f.write(self.name + "\n")
+        f.write(str(table))
+        f.write("\n")
 
     def write_csv(self, f):
         writer = csv.writer(f, lineterminator="\n")
