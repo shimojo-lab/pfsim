@@ -17,6 +17,9 @@ from docopt import docopt
 from .experiment import Experiment
 
 
+__VERSION__ = "1.0.0"
+
+
 def configure_logging(verbose=False):
     loglevel = "DEBUG" if verbose else "INFO"
 
@@ -46,7 +49,7 @@ def configure_logging(verbose=False):
 
 
 def main():
-    args = docopt(__doc__, version="pfsim 0.1.0")
+    args = docopt(__doc__, version=__VERSION__)
     configure_logging(verbose=args["--verbose"])
 
     experiment = Experiment(args["<path/to/scenario>"])

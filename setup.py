@@ -1,6 +1,8 @@
 from codecs import open
 from os import path
 
+import pfsim
+
 from setuptools import find_packages, setup
 
 here = path.abspath(path.dirname(__file__))
@@ -19,7 +21,7 @@ dependency_links = [x.strip().replace("git+", "") for x in all_reqs
 
 setup(
     name="pfsim",
-    version="1.0.5",
+    version=pfsim.__VERSION__,
     description="A packet flow simulator for dynamically reconfigurable"
                 " interconnects",
     long_description=long_description,
