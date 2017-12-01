@@ -1,7 +1,7 @@
 import csv
 from bisect import bisect_right
 from logging import getLogger
-from math import inf, isnan, nan, sqrt
+from math import inf, nan, sqrt
 
 
 logger = getLogger(__name__)
@@ -35,13 +35,6 @@ class Samples:
     @property
     def sd(self):
         return sqrt(self.variance)
-
-    @property
-    def cv(self):
-        if isnan(self.sd):
-            return nan
-
-        return self.sd / self.mean
 
     @property
     def mean(self):
