@@ -4,7 +4,7 @@ from itertools import product
 from logging import getLogger
 from logging.handlers import QueueHandler
 from multiprocessing import Manager, Pool
-from os import makedirs
+from os import getpid, makedirs
 from pathlib import Path
 from threading import Thread
 
@@ -144,8 +144,12 @@ class Scenario:
 
 
 def _run_scenario(path, conf):
+    logger.info("Starting simulation at worker (PID %d)", getpid())
+
     scenario = Scenario(path, conf)
     scenario.run()
+
+    logger.info("Finished simulation at worker (PID %d)", getpid())
 
 
 def _logger_thread(queue):
@@ -159,9 +163,11 @@ def _logger_thread(queue):
 
 def _set_q_handler(queue):
     q_handler = QueueHandler(queue)
-    logger = getLogger()
-    logger.handlers = []
-    logger.addHandler(q_handler)
+    root_logger = getLogger()
+    root_logger.handlers = []
+    root_logger.addHandler(q_handler)
+
+    logger.info("Starting worker proces at PID %d", getpid())
 
 
 class Experiment:
@@ -172,6 +178,9 @@ class Experiment:
 
     def run_parallel(self, degree_parallelism):
         base_path = Path(self.path).parent
+        logger.info("Starting simulation in parallel mode "
+                    "(%d worker processes)", degree_parallelism)
+        logger.info("Using scenario file %s", Path(self.path).resolve())
 
         manager = Manager()
         log_q = manager.Queue()
@@ -212,6 +221,8 @@ class Experiment:
 
     def run_serial(self):
         base_path = Path(self.path).parent
+        logger.info("Starting simulation in serial mode")
+        logger.info("Using scenario file %s", Path(self.path).resolve())
 
         algorithm_conf = self.conf["algorithms"]
         schedulers = algorithm_conf["scheduler"]
