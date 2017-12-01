@@ -155,7 +155,6 @@ def _logger_thread(queue):
 
 
 def _set_q_handler(queue):
-    global q_handler
     q_handler = QueueHandler(queue)
     logger = getLogger()
     logger.handlers = []
