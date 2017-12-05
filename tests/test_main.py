@@ -1,6 +1,6 @@
 from logging import DEBUG, INFO, getLogger
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from docopt import DocoptExit
 
@@ -27,7 +27,19 @@ class TestMain(TestCase):
                 assert getLogger().getEffectiveLevel() == DEBUG
 
     @patch("pfsim.Experiment")
-    def test_experiment(self, MockExperiment):
+    def test_experiment_serial(self, MockExperiment):
         with patch("sys.argv", "__main__.py bar.yml".split()):
+                mock = MagicMock()
+                MockExperiment.return_value = mock
                 main()
                 MockExperiment.assert_called_once_with("bar.yml")
+                mock.run_serial.assert_called_once_with()
+
+    @patch("pfsim.Experiment")
+    def test_experiment_parallel(self, MockExperiment):
+        with patch("sys.argv", "__main__.py -p 4 bar.yml".split()):
+                mock = MagicMock()
+                MockExperiment.return_value = mock
+                main()
+                MockExperiment.assert_called_once_with("bar.yml")
+                mock.run_parallel.assert_called_once_with(4)
