@@ -1,12 +1,14 @@
 import csv
 from bisect import bisect_right
 from logging import getLogger
-from math import inf, nan, sqrt
+from math import sqrt
 
 from prettytable import PrettyTable
 
 
 logger = getLogger(__name__)
+inf = float("inf")
+nan = float("nan")
 
 
 class Samples:

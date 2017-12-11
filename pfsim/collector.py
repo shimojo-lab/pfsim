@@ -1,10 +1,10 @@
 from logging import getLogger
-from math import inf
 from pathlib import Path
 
 from .statistics import Samples, TimeSeriesSamples
 
 logger = getLogger(__name__)
+inf = float("inf")
 
 
 class MetricsCollector:
@@ -20,7 +20,7 @@ class MetricsCollector:
         for metric in self.metrics:
             path = Path(output_dir) / Path(metric.name).with_suffix(".csv")
 
-            with open(path, "w", newline="") as f:
+            with open(str(path), "w", newline="") as f:
                 metric.write_csv(f)
 
 
