@@ -43,7 +43,7 @@ def _set_q_handler(queue):
 class SimulationRunner:
     def __init__(self, path):
         self.path = path
-        with open(path) as f:
+        with open(str(path)) as f:
             conf = yaml.load(f)
             self.confs = Scenario.generate_from_yaml(conf)
 

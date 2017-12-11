@@ -2,11 +2,11 @@ import random
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from logging import getLogger
-from math import inf
 
 import networkx as nx
 
 logger = getLogger(__name__)
+inf = float("inf")
 
 
 class PathCache:

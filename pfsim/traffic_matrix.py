@@ -33,7 +33,7 @@ class TrafficMatrix:
 
     @classmethod
     def _load_single_file(cls, f, dok):
-        trace = json.load(f)
+        trace = json.loads(f.read().decode("utf-8"))
         src = trace["rank"]
 
         for dst, tx_messages in enumerate(trace["tx_messages"]):

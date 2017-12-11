@@ -1,6 +1,5 @@
 from importlib import import_module
 from logging import getLogger
-from os import makedirs
 from pathlib import Path
 
 import networkx as nx
@@ -22,7 +21,7 @@ class Simulation:
 
         # Create cluster
         self.cluster = Cluster(
-            graph=nx.read_graphml(base_path / conf.topology),
+            graph=nx.read_graphml(str(base_path / conf.topology)),
             host_selector=self._load_class(conf.host_selector),
             process_mapper=self._load_class(conf.process_mapper),
             scheduler=self._load_class(conf.scheduler),
@@ -59,14 +58,17 @@ class Simulation:
             conf.host_selector.split(".")[-1] / \
             conf.process_mapper.split(".")[-1] / \
             conf.router.split(".")[-1]
-        makedirs(self.output_path, exist_ok=True)
+        if Path.is_dir(self.output_path):
+            pass
+        else:
+            Path.mkdir(self.output_path)
 
         self.conf = conf
 
     def run(self):
         result_path = (Path(self.output_path) / "result.txt")
 
-        with open(result_path, "w") as f:
+        with open(str(result_path), "w") as f:
             # Print simulator configurations
             self.report(f)
             # Print cluster configuration
