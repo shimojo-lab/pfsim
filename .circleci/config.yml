@@ -4,7 +4,7 @@ jobs:
      environment:
        CC_TEST_REPORTER_ID: 87695fce931f8beb2fd8887d8ae6d6771d4d28c6f4db11345a2600692dc49b12
      docker:
-       - image: circleci/python:3.6
+       - image: circleci/python:3.4
      steps:
        - checkout
        - restore_cache:

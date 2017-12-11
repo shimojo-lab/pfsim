@@ -1,7 +1,6 @@
 import json
 import tarfile
 from io import BytesIO
-from math import isclose
 
 from pfsim.traffic_matrix import TrafficMatrix
 
@@ -67,11 +66,11 @@ class TestTrafficMatrix:
 
     def test_sparsity(self):
         tm = TrafficMatrix.load(self.file)
-        assert isclose(tm.sparsity, 1 - 6 / 16)
+        assert abs(tm.sparsity - (1 - 6 / 16)) < 1e-9
 
     def test_density(self):
         tm = TrafficMatrix.load(self.file)
-        assert isclose(tm.density, 6 / 16)
+        assert abs(tm.density - 6 / 16) < 1e-9
 
     def test_graph(self):
         tm = TrafficMatrix.load(self.file)
