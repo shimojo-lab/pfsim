@@ -7,7 +7,7 @@ from threading import Thread
 
 import yaml
 
-from .configuration import ScenarioConf
+from .configuration import Scenario
 from .simulation import Simulation
 
 logger = getLogger(__name__)
@@ -45,7 +45,7 @@ class Experiment:
         self.path = path
         with open(path) as f:
             conf = yaml.load(f)
-            self.confs = ScenarioConf.generate_from_yaml(conf)
+            self.confs = Scenario.generate_from_yaml(conf)
 
     def run_parallel(self, degree_parallelism):
         base_path = Path(self.path).parent

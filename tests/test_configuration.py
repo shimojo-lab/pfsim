@@ -1,6 +1,6 @@
 from itertools import product
 
-from pfsim.configuration import ScenarioConf
+from pfsim.configuration import Scenario
 
 
 FIXTURE_SINGLE = {
@@ -61,7 +61,7 @@ FIXTURE_MULTIPLE = {
 
 class TestScenarioConf:
     def test_single(self):
-        confs = list(ScenarioConf.generate_from_yaml(FIXTURE_SINGLE))
+        confs = list(Scenario.generate_from_yaml(FIXTURE_SINGLE))
 
         assert len(confs) == 1
 
@@ -86,7 +86,7 @@ class TestScenarioConf:
         assert job.trace == "trace.tar.gz"
 
     def test_multiple(self):
-        confs = list(ScenarioConf.generate_from_yaml(FIXTURE_MULTIPLE))
+        confs = list(Scenario.generate_from_yaml(FIXTURE_MULTIPLE))
 
         assert len(confs) == 16
 
