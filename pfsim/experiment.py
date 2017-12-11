@@ -8,7 +8,7 @@ from threading import Thread
 import yaml
 
 from .configuration import ScenarioConf
-from .scenario import Scenario
+from .simulation import Simulation
 
 logger = getLogger(__name__)
 
@@ -16,7 +16,7 @@ logger = getLogger(__name__)
 def _run_scenario(path, conf):
     logger.info("Starting simulation at worker (PID %d)", getpid())
 
-    scenario = Scenario(path, conf)
+    scenario = Simulation(path, conf)
     scenario.run()
 
     logger.info("Finished simulation at worker (PID %d)", getpid())
