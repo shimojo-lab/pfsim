@@ -17,8 +17,8 @@ class TestMain(TestCase):
             with self.assertRaises(SystemExit):
                 main()
 
-    @patch("pfsim.Experiment")
-    def test_log_level(self, MockExperiment):
+    @patch("pfsim.SimulationRunner")
+    def test_log_level(self, MockRunner):
         with patch("sys.argv", "__main__.py foo.yml".split()):
                 main()
                 assert getLogger().getEffectiveLevel() == INFO
@@ -26,20 +26,20 @@ class TestMain(TestCase):
                 main()
                 assert getLogger().getEffectiveLevel() == DEBUG
 
-    @patch("pfsim.Experiment")
-    def test_experiment_serial(self, MockExperiment):
+    @patch("pfsim.SimulationRunner")
+    def test_experiment_serial(self, MockRunner):
         with patch("sys.argv", "__main__.py bar.yml".split()):
                 mock = MagicMock()
-                MockExperiment.return_value = mock
+                MockRunner.return_value = mock
                 main()
-                MockExperiment.assert_called_once_with("bar.yml")
+                MockRunner.assert_called_once_with("bar.yml")
                 mock.run_serial.assert_called_once_with()
 
-    @patch("pfsim.Experiment")
-    def test_experiment_parallel(self, MockExperiment):
+    @patch("pfsim.SimulationRunner")
+    def test_experiment_parallel(self, MockRunner):
         with patch("sys.argv", "__main__.py -p 4 bar.yml".split()):
                 mock = MagicMock()
-                MockExperiment.return_value = mock
+                MockRunner.return_value = mock
                 main()
-                MockExperiment.assert_called_once_with("bar.yml")
+                MockRunner.assert_called_once_with("bar.yml")
                 mock.run_parallel.assert_called_once_with(4)

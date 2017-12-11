@@ -15,7 +15,7 @@ from .simulator import Simulator
 logger = getLogger(__name__)
 
 
-class Scenario:
+class Simulation:
     def __init__(self, base_path, conf):
         # Create simulator
         self.simulator = Simulator()

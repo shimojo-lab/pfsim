@@ -7,8 +7,8 @@ from threading import Thread
 
 import yaml
 
-from .configuration import ScenarioConf
-from .scenario import Scenario
+from .configuration import Scenario
+from .simulation import Simulation
 
 logger = getLogger(__name__)
 
@@ -16,7 +16,7 @@ logger = getLogger(__name__)
 def _run_scenario(path, conf):
     logger.info("Starting simulation at worker (PID %d)", getpid())
 
-    scenario = Scenario(path, conf)
+    scenario = Simulation(path, conf)
     scenario.run()
 
     logger.info("Finished simulation at worker (PID %d)", getpid())
@@ -40,12 +40,12 @@ def _set_q_handler(queue):
     logger.info("Starting worker proces at PID %d", getpid())
 
 
-class Experiment:
+class SimulationRunner:
     def __init__(self, path):
         self.path = path
         with open(path) as f:
             conf = yaml.load(f)
-            self.confs = ScenarioConf.generate_from_yaml(conf)
+            self.confs = Scenario.generate_from_yaml(conf)
 
     def run_parallel(self, degree_parallelism):
         base_path = Path(self.path).parent

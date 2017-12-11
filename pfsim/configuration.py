@@ -48,8 +48,8 @@ class JobConf(_JobConf):
     pass
 
 
-_ScenarioConf = namedtuple(
-    "ScenarioConf",
+_Scenario = namedtuple(
+    "Scenario",
     [
         "duration",
         "topology",
@@ -63,7 +63,7 @@ _ScenarioConf = namedtuple(
 )
 
 
-class ScenarioConf(_ScenarioConf):
+class Scenario(_Scenario):
     @classmethod
     def generate_from_yaml(cls, yml):
         d = EXPERIMENT_CONF_SCHEMA.validate(yml)
