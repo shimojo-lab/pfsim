@@ -15,7 +15,7 @@ from logging import getLogger
 
 from docopt import docopt
 
-from .experiment import Experiment
+from .simulation_runner import SimulationRunner
 
 
 __VERSION__ = "1.0.0"
@@ -57,9 +57,9 @@ def main():
 
     logger.info("Starting pfsim %s", __VERSION__)
 
-    experiment = Experiment(args["<path/to/scenario>"])
+    runner = SimulationRunner(args["<path/to/scenario>"])
     if args["--parallel"]:
         num_procs = int(args["--parallel"][0])
-        experiment.run_parallel(num_procs)
+        runner.run_parallel(num_procs)
     else:
-        experiment.run_serial()
+        runner.run_serial()

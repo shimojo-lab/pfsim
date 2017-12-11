@@ -40,7 +40,7 @@ def _set_q_handler(queue):
     logger.info("Starting worker proces at PID %d", getpid())
 
 
-class Experiment:
+class SimulationRunner:
     def __init__(self, path):
         self.path = path
         with open(path) as f:
