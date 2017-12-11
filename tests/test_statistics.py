@@ -1,5 +1,5 @@
 from io import StringIO
-from math import isclose, isnan
+from math import isnan
 
 from pfsim.statistics import Samples, TimeSeriesSamples
 
@@ -33,8 +33,8 @@ class TestTimedSamples:
         variance = (1.0 * (1.0 - mean) ** 2 + 2.0 * (2.0 - mean) ** 2
                     + 3.0 * (3.0 - mean) ** 2) / (1.0 + 2.0 + 3.0)
 
-        assert isclose(self.samples.mean, mean)
-        assert isclose(self.samples.variance, variance)
+        assert abs(self.samples.mean - mean) < 1e-9
+        assert abs(self.samples.variance - variance) < 1e-9
         assert self.samples.count == 3
         assert self.samples.max == 3.0
         assert self.samples.min == 1.0
