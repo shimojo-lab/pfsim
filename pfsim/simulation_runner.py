@@ -13,11 +13,15 @@ from .simulation import Simulation
 logger = getLogger(__name__)
 
 
-def _run_scenario(path, conf):
+def _run_scenario(path, conf, scenario_id):
     logger.info("Starting simulation at worker (PID %d)", getpid())
 
-    scenario = Simulation(path, conf)
-    scenario.run()
+    try:
+        scenario = Simulation(path, conf, scenario_id)
+        scenario.run()
+
+    except Exception as err:
+        logger.exception("%s", err)
 
     logger.info("Finished simulation at worker (PID %d)", getpid())
 
@@ -49,6 +53,7 @@ class SimulationRunner:
 
     def run_parallel(self, degree_parallelism):
         base_path = Path(self.path).parent
+
         logger.info("Starting simulation in parallel mode "
                     "(%d worker processes)", degree_parallelism)
         logger.info("Using scenario file %s", Path(self.path).resolve())
@@ -61,11 +66,9 @@ class SimulationRunner:
 
         with Pool(degree_parallelism, _set_q_handler, (log_q,)) as pool:
             results = []
-            for conf in self.confs:
-                res = pool.apply_async(_run_scenario, (base_path, conf))
+            for i, conf in enumerate(self.confs):
+                res = pool.apply_async(_run_scenario, (base_path, conf, i))
                 results.append(res)
-            pool.close()
-            pool.join()
 
             for res in results:
                 res.get()
@@ -78,5 +81,5 @@ class SimulationRunner:
         logger.info("Starting simulation in serial mode")
         logger.info("Using scenario file %s", Path(self.path).resolve())
 
-        for conf in self.confs:
-            _run_scenario(base_path, conf)
+        for i, conf in enumerate(self.confs):
+            _run_scenario(base_path, conf, i)
