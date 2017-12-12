@@ -1,5 +1,6 @@
 from importlib import import_module
 from logging import getLogger
+from os import makedirs
 from pathlib import Path
 
 import networkx as nx
@@ -15,7 +16,7 @@ logger = getLogger(__name__)
 
 
 class Simulation:
-    def __init__(self, base_path, conf):
+    def __init__(self, base_path, conf, scenario_id):
         # Create simulator
         self.simulator = Simulator()
 
@@ -54,14 +55,9 @@ class Simulation:
         # Create output directory and log handlers
         self.output_path = base_path / \
             conf.output / \
-            conf.scheduler.split(".")[-1] / \
-            conf.host_selector.split(".")[-1] / \
-            conf.process_mapper.split(".")[-1] / \
-            conf.router.split(".")[-1]
-        if Path.is_dir(self.output_path):
-            pass
-        else:
-            Path.mkdir(self.output_path)
+            str(scenario_id)
+
+        makedirs(str(self.output_path), exist_ok=True)
 
         self.conf = conf
 
