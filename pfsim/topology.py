@@ -10,7 +10,7 @@ class Topology(ABC):
 
 
 class FileTopology(Topology):
-    def __init__(self, base_path, path):
+    def __init__(self, base_path, path, **kwargs):
         self.path = str(base_path / path)
 
     def generate(self):

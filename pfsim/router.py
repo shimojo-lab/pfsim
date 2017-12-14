@@ -38,7 +38,7 @@ class PathCache:
 
 
 class Router(ABC):
-    def __init__(self, graph, hosts=None, switches=None):
+    def __init__(self, graph, hosts=None, switches=None, **kwargs):
         self.graph = graph
         if hosts is None:
             hosts = []
@@ -57,8 +57,8 @@ class Router(ABC):
 
 
 class RandomRouter(Router):
-    def __init__(self, graph, hosts=None, switches=None):
-        super().__init__(graph, hosts=hosts, switches=switches)
+    def __init__(self, graph, hosts=None, switches=None, **kwargs):
+        super().__init__(graph, hosts=hosts, switches=switches, **kwargs)
 
     def route(self, src, dst, job=None):
         if self.cache.has(src, dst):
@@ -72,8 +72,8 @@ class RandomRouter(Router):
 
 
 class DmodKRouter(Router):
-    def __init__(self, graph, hosts=None, switches=None):
-        super().__init__(graph, hosts=hosts, switches=switches)
+    def __init__(self, graph, hosts=None, switches=None, **kwargs):
+        super().__init__(graph, hosts=hosts, switches=switches, **kwargs)
 
     def route(self, src, dst, job=None):
         if self.cache.has(src, dst):
@@ -104,8 +104,8 @@ class DmodKRouter(Router):
 
 
 class GreedyRouter(Router):
-    def __init__(self, graph, hosts=None, switches=None):
-        super().__init__(graph, hosts=hosts, switches=switches)
+    def __init__(self, graph, hosts=None, switches=None, **kwargs):
+        super().__init__(graph, hosts=hosts, switches=switches, **kwargs)
 
     def route(self, src, dst, job=None):
         if self.cache.has(src, dst):
@@ -131,8 +131,8 @@ class GreedyRouter(Router):
 
 
 class GreedyRouter2(Router):
-    def __init__(self, graph, hosts=None, switches=None):
-        super().__init__(graph, hosts=hosts, switches=switches)
+    def __init__(self, graph, hosts=None, switches=None, **kwargs):
+        super().__init__(graph, hosts=hosts, switches=switches, **kwargs)
 
     def route(self, src, dst, job=None):
         if self.cache.has(src, dst):

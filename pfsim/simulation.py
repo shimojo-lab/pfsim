@@ -20,9 +20,7 @@ class Simulation:
 
         # Create topology
         params = conf.topology.params.copy()
-        if conf.topology.kind == "pfsim.topology.FileTopology":
-            params["base_path"] = base_path
-
+        params["base_path"] = base_path
         topo = self._load_class(conf.topology.kind)
         graph = topo(**params).generate()
 

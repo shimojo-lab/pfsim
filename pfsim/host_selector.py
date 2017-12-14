@@ -7,7 +7,7 @@ logger = getLogger(__name__)
 
 
 class HostSelector(ABC):
-    def __init__(self, hosts):
+    def __init__(self, hosts, **kwargs):
         self.hosts = hosts
 
     # Check if there are enough PEs to run the given job
