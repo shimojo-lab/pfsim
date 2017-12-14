@@ -14,16 +14,21 @@ logger = getLogger(__name__)
 
 
 def _run_scenario(path, conf, scenario_id):
-    logger.info("Starting simulation at worker (PID %d)", getpid())
+    logger.info("Starting scenario #%d at worker (PID %d)",
+                scenario_id, getpid())
 
     try:
         scenario = Simulation(path, conf, scenario_id)
         scenario.run()
 
     except Exception as err:
-        logger.exception("%s", err)
+        logger.error("Scenario #%d failed at worker (PID %d)",
+                     scenario_id, getpid())
+        logger.exception(err)
 
-    logger.info("Finished simulation at worker (PID %d)", getpid())
+    else:
+        logger.info("Scenario #%d finished at worker (PID %d)",
+                    scenario_id, getpid())
 
 
 def _logger_thread(queue):

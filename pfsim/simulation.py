@@ -93,6 +93,16 @@ class Simulation:
 
     def _load_class(self, path):
         mod_name, cls_name = path.rsplit(".", 1)
-        mod = import_module(mod_name)
+
+        try:
+            mod = import_module(mod_name)
+        except ImportError:
+            logger.error("Could not load module %s", mod_name)
+            raise
+
+        if not hasattr(mod, cls_name):
+            logger.error("Module %s does not contain class %s",
+                         mod_name, cls_name)
+            raise
 
         return getattr(mod, cls_name)
