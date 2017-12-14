@@ -1,7 +1,10 @@
 ---
 duration: 1000.0
-topology: topologies/milk.graphml
-output: output/milk-cg-dmodk
+topology:
+  - kind: pfsim.topology.FileTopology
+    params:
+      path: topologies/milk.graphml
+output: output/milk-ft
 algorithms:
   scheduler:
     - pfsim.scheduler.FCFSScheduler

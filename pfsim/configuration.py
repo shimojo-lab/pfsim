@@ -6,7 +6,12 @@ from schema import Or, Schema
 
 EXPERIMENT_CONF_SCHEMA = Schema({
     "duration": Or(int, float),
-    "topology": str,
+    "topology": [{
+        "kind": str,
+        "params": {
+            str: Or(str, int, float)
+        }
+    }],
     "output": str,
     "algorithms": {
         "scheduler": [str],
@@ -48,9 +53,23 @@ class JobConf(_JobConf):
     pass
 
 
+_TopologyConf = namedtuple(
+    "TopologyConf",
+    [
+        "kind",
+        "params",
+    ]
+)
+
+
+class TopologyConf(_TopologyConf):
+    pass
+
+
 _Scenario = namedtuple(
     "Scenario",
     [
+        "id",
         "duration",
         "topology",
         "output",
@@ -68,13 +87,14 @@ class Scenario(_Scenario):
     def generate_from_yaml(cls, yml):
         d = EXPERIMENT_CONF_SCHEMA.validate(yml)
 
+        topologies = d["topology"]
         schedulers = d["algorithms"]["scheduler"]
         host_selectors = d["algorithms"]["host_selector"]
         process_mappers = d["algorithms"]["process_mapper"]
         routers = d["algorithms"]["router"]
 
-        algorithms = product(schedulers, host_selectors, process_mappers,
-                             routers)
+        algorithms = product(topologies, schedulers, host_selectors,
+                             process_mappers, routers)
 
         jobs = [JobConf(
                 submit_dist=jd["submit"]["distribution"],
@@ -83,9 +103,11 @@ class Scenario(_Scenario):
                 duration_params=jd["duration"]["params"],
                 trace=jd["trace"]) for jd in d["jobs"]]
 
-        for (sched, hs, pm, rt) in algorithms:
-            yield cls(duration=d["duration"],
-                      topology=d["topology"],
+        for i, (topo, sched, hs, pm, rt) in enumerate(algorithms):
+            yield cls(id=i,
+                      duration=d["duration"],
+                      topology=TopologyConf(kind=topo["kind"],
+                                            params=topo["params"]),
                       output=d["output"],
                       scheduler=sched,
                       host_selector=hs,

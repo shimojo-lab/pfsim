@@ -5,7 +5,12 @@ from pfsim.configuration import Scenario
 
 FIXTURE_SINGLE = {
     "duration": 100.0,
-    "topology": "foo.graphml",
+    "topology": [{
+        "kind": "TestTopology",
+        "params": {
+            "a": 1
+        }
+    }],
     "output": "bar",
     "algorithms": {
         "scheduler": ["FooScheduler"],
@@ -33,7 +38,12 @@ FIXTURE_SINGLE = {
 
 FIXTURE_MULTIPLE = {
     "duration": 100.0,
-    "topology": "foo.graphml",
+    "topology": [{
+        "kind": "TestTopology",
+        "params": {
+            "a": 1
+        }
+    }],
     "output": "bar",
     "algorithms": {
         "scheduler": ["FooScheduler", "BarScheduler"],
@@ -68,7 +78,8 @@ class TestScenarioConf:
         conf = confs[0]
 
         assert conf.duration == 100.0
-        assert conf.topology == "foo.graphml"
+        assert conf.topology.kind == "TestTopology"
+        assert conf.topology.params == {"a": 1}
         assert conf.output == "bar"
         assert conf.scheduler == "FooScheduler"
         assert conf.host_selector == "FooHostSelector"

@@ -3,8 +3,6 @@ from logging import getLogger
 from os import makedirs
 from pathlib import Path
 
-import networkx as nx
-
 from prettytable import PrettyTable
 
 from .cluster import Cluster
@@ -20,9 +18,17 @@ class Simulation:
         # Create simulator
         self.simulator = Simulator()
 
+        # Create topology
+        params = conf.topology.params.copy()
+        if conf.topology.kind == "pfsim.topology.FileTopology":
+            params["base_path"] = base_path
+
+        topo = self._load_class(conf.topology.kind)
+        graph = topo(**params).generate()
+
         # Create cluster
         self.cluster = Cluster(
-            graph=nx.read_graphml(str(base_path / conf.topology)),
+            graph=graph,
             host_selector=self._load_class(conf.host_selector),
             process_mapper=self._load_class(conf.process_mapper),
             scheduler=self._load_class(conf.scheduler),
