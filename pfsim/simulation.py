@@ -16,7 +16,7 @@ logger = getLogger(__name__)
 
 
 class Simulation:
-    def __init__(self, base_path, conf, scenario_id):
+    def __init__(self, base_path, conf):
         # Create simulator
         self.simulator = Simulator()
 
@@ -53,9 +53,7 @@ class Simulation:
         ]
 
         # Create output directory and log handlers
-        self.output_path = base_path / \
-            conf.output / \
-            str(scenario_id)
+        self.output_path = base_path / conf.output / str(conf.id)
 
         makedirs(str(self.output_path), exist_ok=True)
 

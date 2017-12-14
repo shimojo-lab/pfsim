@@ -13,22 +13,22 @@ from .simulation import Simulation
 logger = getLogger(__name__)
 
 
-def _run_scenario(path, conf, scenario_id):
+def _run_scenario(path, conf):
     logger.info("Starting scenario #%d at worker (PID %d)",
-                scenario_id, getpid())
+                conf.id, getpid())
 
     try:
-        scenario = Simulation(path, conf, scenario_id)
+        scenario = Simulation(path, conf)
         scenario.run()
 
     except Exception as err:
         logger.error("Scenario #%d failed at worker (PID %d)",
-                     scenario_id, getpid())
+                     conf.id, getpid())
         logger.exception(err)
 
     else:
         logger.info("Scenario #%d finished at worker (PID %d)",
-                    scenario_id, getpid())
+                    conf.id, getpid())
 
 
 def _logger_thread(queue):
@@ -71,8 +71,8 @@ class SimulationRunner:
 
         with Pool(degree_parallelism, _set_q_handler, (log_q,)) as pool:
             results = []
-            for i, conf in enumerate(self.confs):
-                res = pool.apply_async(_run_scenario, (base_path, conf, i))
+            for conf in self.confs:
+                res = pool.apply_async(_run_scenario, (base_path, conf))
                 results.append(res)
 
             for res in results:
@@ -86,5 +86,5 @@ class SimulationRunner:
         logger.info("Starting simulation in serial mode")
         logger.info("Using scenario file %s", Path(self.path).resolve())
 
-        for i, conf in enumerate(self.confs):
-            _run_scenario(base_path, conf, i)
+        for conf in self.confs:
+            _run_scenario(base_path, conf)
