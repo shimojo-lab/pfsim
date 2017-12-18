@@ -1,10 +1,13 @@
 ---
 duration: 1000.0
 topology:
-  - kind: pfsim.topology.FileTopology
+  - kind: pfsim.topology.XGFTTopology
     params:
-      path: topologies/milk.graphml
-output: output/milk-cg
+      h: 3
+      m: [4, 4, 3]
+      w: [1, 2, 2]
+      npe: 8
+output: output/xgft-cg
 algorithms:
   scheduler:
     - pfsim.scheduler.FCFSScheduler
