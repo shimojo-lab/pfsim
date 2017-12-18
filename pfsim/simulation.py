@@ -84,7 +84,8 @@ class Simulation:
         table.align = "l"
 
         table.add_row(["Duration", self.conf.duration])
-        table.add_row(["Cluster Topology", self.conf.topology])
+        table.add_row(["Cluster Topology", "{0} {1}".format(
+            self.conf.topology.kind, self.conf.topology.params)])
         table.add_row(["Host Section Algorithm", self.conf.host_selector])
         table.add_row(["Process Mapping Algorithm", self.conf.process_mapper])
         table.add_row(["Routing Algorithm", self.conf.router])
