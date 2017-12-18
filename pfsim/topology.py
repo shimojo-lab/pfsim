@@ -21,10 +21,12 @@ class FileTopology(Topology):
 
 
 class NDTorusTopology(Topology):
-    def __init__(self, n, dims):
+    def __init__(self, n, dims, **kwargs):
         assert n == len(dims)
         self.n = n
         self.dims = dims
+        self.bw = kwargs.get("bw", 1)
+        self.npe = kwargs.get("npe", 1)
 
     def generate(self):
         idx = 0
@@ -32,13 +34,13 @@ class NDTorusTopology(Topology):
 
         def _generate(n, dims):
             nonlocal idx
-            nonlocal g
 
             # 1-D torus
             if n == 1:
-                indices = range(idx, idx + dims[0])
-                g.add_cycle(indices)
-                g.add_cycle(reversed(indices))
+                nodes = range(idx, idx + dims[0])
+                g.add_nodes_from(nodes, capacity=self.npe, typ="host")
+                g.add_cycle(nodes, capacity=self.bw)
+                g.add_cycle(reversed(nodes), capacity=self.bw)
                 idx += dims[0]
                 return
 
@@ -52,8 +54,8 @@ class NDTorusTopology(Topology):
             sz = reduce(mul, dims[:-1], 1)
             for i in range(tmp, tmp + sz):
                 indices = range(i, dims[-1] * sz + i, sz)
-                g.add_cycle(indices)
-                g.add_cycle(reversed(indices))
+                g.add_cycle(indices, capacity=self.bw)
+                g.add_cycle(reversed(indices), capacity=self.bw)
 
         _generate(self.n, self.dims)
 
@@ -61,10 +63,14 @@ class NDTorusTopology(Topology):
 
 
 class XGFTTopology(Topology):
-    def __init__(self, h, m, w):
+    def __init__(self, h, m, w, **kwargs):
+        assert h == len(m)
+        assert h == len(w)
         self.h = h
         self.m = m
         self.w = w
+        self.bw = kwargs.get("bw", 1)
+        self.npe = kwargs.get("npe", 1)
 
     def generate(self):
         idx = count()
@@ -73,16 +79,16 @@ class XGFTTopology(Topology):
         def _generate(h, m, w):
             if h == 0:
                 i = next(idx)
-                g.add_node(i, typ="host", capacity=1)
+                g.add_node(i, typ="host", capacity=self.npe)
                 return [i]
 
-            spines = list(islice(idx, (reduce(mul, w, 1))))
-            g.add_nodes_from(spines, typ="switch", capacity=1)
+            spines = list(islice(idx, reduce(mul, w, 1)))
+            g.add_nodes_from(spines, typ="switch")
 
             for i in range(m[-1]):
                 leaves = _generate(h - 1, m[:-1], w[:-1])
-                g.add_edges_from(product(spines, leaves))
-                g.add_edges_from(product(leaves, spines))
+                g.add_edges_from(product(spines, leaves), capacity=self.bw)
+                g.add_edges_from(product(leaves, spines), capacity=self.bw)
 
             return spines
 
