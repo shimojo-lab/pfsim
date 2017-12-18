@@ -8,7 +8,7 @@ logger = getLogger(__name__)
 
 
 class FCFSScheduler:
-    def __init__(self, hosts, simulator, selector, mapper):
+    def __init__(self, hosts, simulator, selector, mapper, **kwargs):
         self.hosts = hosts
         self.simulator = simulator
         self.queue = deque()

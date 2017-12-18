@@ -7,6 +7,9 @@ logger = getLogger(__name__)
 
 
 class ProcessMapper(ABC):
+    def __init__(self, **kwargs):
+        pass
+
     @abstractmethod
     def map(self, procs, hosts):  # pragma: no cover
         pass

@@ -3,8 +3,6 @@ from logging import getLogger
 from os import makedirs
 from pathlib import Path
 
-import networkx as nx
-
 from prettytable import PrettyTable
 
 from .cluster import Cluster
@@ -16,13 +14,19 @@ logger = getLogger(__name__)
 
 
 class Simulation:
-    def __init__(self, base_path, conf, scenario_id):
+    def __init__(self, base_path, conf):
         # Create simulator
         self.simulator = Simulator()
 
+        # Create topology
+        params = conf.topology.params.copy()
+        params["base_path"] = base_path
+        topo = self._load_class(conf.topology.kind)
+        graph = topo(**params).generate()
+
         # Create cluster
         self.cluster = Cluster(
-            graph=nx.read_graphml(str(base_path / conf.topology)),
+            graph=graph,
             host_selector=self._load_class(conf.host_selector),
             process_mapper=self._load_class(conf.process_mapper),
             scheduler=self._load_class(conf.scheduler),
@@ -53,9 +57,7 @@ class Simulation:
         ]
 
         # Create output directory and log handlers
-        self.output_path = base_path / \
-            conf.output / \
-            str(scenario_id)
+        self.output_path = base_path / conf.output / str(conf.id)
 
         makedirs(str(self.output_path), exist_ok=True)
 
@@ -82,7 +84,8 @@ class Simulation:
         table.align = "l"
 
         table.add_row(["Duration", self.conf.duration])
-        table.add_row(["Cluster Topology", self.conf.topology])
+        table.add_row(["Cluster Topology", "{0} {1}".format(
+            self.conf.topology.kind, self.conf.topology.params)])
         table.add_row(["Host Section Algorithm", self.conf.host_selector])
         table.add_row(["Process Mapping Algorithm", self.conf.process_mapper])
         table.add_row(["Routing Algorithm", self.conf.router])
@@ -93,6 +96,16 @@ class Simulation:
 
     def _load_class(self, path):
         mod_name, cls_name = path.rsplit(".", 1)
-        mod = import_module(mod_name)
+
+        try:
+            mod = import_module(mod_name)
+        except ImportError:
+            logger.error("Could not load module %s", mod_name)
+            raise
+
+        if not hasattr(mod, cls_name):
+            logger.error("Module %s does not contain class %s",
+                         mod_name, cls_name)
+            raise
 
         return getattr(mod, cls_name)

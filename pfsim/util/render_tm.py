@@ -67,7 +67,7 @@ def main():
                 continue
 
             with tar.extractfile(member) as f:
-                trace = json.load(f)
+                trace = json.loads(f.read().decode("utf-8"))
                 n_procs = trace["n_procs"]
 
                 if traffic_matrix is None:
