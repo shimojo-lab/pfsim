@@ -9,7 +9,7 @@ EXPERIMENT_CONF_SCHEMA = Schema({
     "topology": [{
         "kind": str,
         "params": {
-            str: Or(str, int, float)
+            str: object
         }
     }],
     "output": str,

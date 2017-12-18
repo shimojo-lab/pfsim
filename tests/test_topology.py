@@ -38,6 +38,10 @@ class TestTorusTopology:
 
 
 class TestXGFTTopology:
+    #  Test cases are taken from X. Yuan, W. Nienaber, and S. Mahapatra, “ On
+    #  Folded-Clos Networks with Deterministic Single-Path Routing,” ACM Trans.
+    #  Parallel Comput., vol. 2, no. 4, pp. 1–22, Jan. 2016.
+
     def test_host(self):
         g = XGFTTopology(0, [], []).generate()
 
