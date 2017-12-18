@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from functools import reduce
+from itertools import count, islice, product
 from operator import mul
 
 import networkx as nx
@@ -39,7 +40,7 @@ class NDTorusTopology(Topology):
                 g.add_cycle(indices)
                 g.add_cycle(reversed(indices))
                 idx += dims[0]
-                return g
+                return
 
             tmp = idx
 
@@ -51,10 +52,40 @@ class NDTorusTopology(Topology):
             sz = reduce(mul, dims[:-1], 1)
             for i in range(tmp, tmp + sz):
                 indices = range(i, dims[-1] * sz + i, sz)
-                print(list(indices))
                 g.add_cycle(indices)
                 g.add_cycle(reversed(indices))
 
         _generate(self.n, self.dims)
+
+        return g
+
+
+class XGFTTopology(Topology):
+    def __init__(self, h, m, w):
+        self.h = h
+        self.m = m
+        self.w = w
+
+    def generate(self):
+        idx = count()
+        g = nx.DiGraph()
+
+        def _generate(h, m, w):
+            if h == 0:
+                i = next(idx)
+                g.add_node(i, typ="host", capacity=1)
+                return [i]
+
+            spines = list(islice(idx, (reduce(mul, w, 1))))
+            g.add_nodes_from(spines, typ="switch", capacity=1)
+
+            for i in range(m[-1]):
+                leaves = _generate(h - 1, m[:-1], w[:-1])
+                g.add_edges_from(product(spines, leaves))
+                g.add_edges_from(product(leaves, spines))
+
+            return spines
+
+        _generate(self.h, self.m, self.w)
 
         return g
